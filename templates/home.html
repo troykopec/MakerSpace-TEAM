@@ -1,0 +1,20 @@
+<ul>
+  <a href="{{ url_for("sites.details_page", site_id=site.id) }}">
+      <li class="text-lg px-8 py-3 {% if selected == "Site Details" %}border-l-4 bg-gray-200{% endif %}"">Details</li>
+  </a>
+  <a href="{{ url_for("sites.events_page", site_id=site.id) }}">
+      <li class="text-lg px-8 py-3 {% if selected == "Events" %}border-l-4 bg-gray-200{% endif %}"">Events</li>
+  </a>
+  <a href="{{ url_for("sites.environment_page", site_id=site.id) }}">
+      <li class="text-lg px-8 py-3 {% if selected == "Environment" %}border-l-4 bg-gray-200{% endif %}"">Environment Variables</li>
+  </a>
+  <a href="{{ url_for("sites.nginx_page", site_id=site.id) }}">
+      <li class="text-lg px-8 py-3 {% if selected == "NGINX Config" %}border-l-4 bg-gray-200{% endif %}"">NGINX Config</li>
+  </a>
+  <a href="{{ url_for("sites.ssl_page", site_id=site.id) }}">
+      <li class="text-lg px-8 py-3 {% if selected == "SSL" %}border-l-4 bg-gray-200{% endif %}"">SSL Config</li>
+  </a>
+  <a href="{{ url_for("sites.workers_page", site_id=site.id) }}">
+      <li class="text-lg px-8 py-3 {% if selected == "Workers" %}border-l-4 bg-gray-200{% endif %}"">Workers</li>
+  </a>
+</ul>
