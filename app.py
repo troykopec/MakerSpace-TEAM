@@ -35,22 +35,22 @@ class UserForm(FlaskForm):
 # Main Page
 @app.route('/')
 def index():
-    return render_template("startbootstrap-simple-sidebar/dist/index.html")
+    return render_template("simple-sidebar/dist/index.html")
 
 # localhost:5000/user/John
 @app.route('/user/<name>')
 def user(name):
-    return render_template("startbootstrap-simple-sidebar/dist/add_user.html", user_name=name)
+    return render_template("simple-sidebar/dist/add_user.html", user_name=name)
 
 #Invalid URL
 @app.errorhandler(404)
 def page_not_found(e):
-        return render_template("startbootstrap-simple-sidebar/dist/404.html"), 404
+        return render_template("simple-sidebar/dist/404.html"), 404
 
 #Internal Server Error
 @app.errorhandler(500)
 def page_not_found(e):
-        return render_template("startbootstrap-simple-sidebar/dist/500.html"), 500
+        return render_template("simple-sidebar/dist/500.html"), 500
     
 if __name__ == "__main__":
     app.run(host="127.0.0.2", port=8080, debug=True)
