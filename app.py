@@ -10,10 +10,16 @@ app.app_context().push()
 
 #ADD DATA BASE
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-
+app.config['SECRET_KEY'] = "my secret key"
 
 #Initialize the Database
 db = SQLAlchemy(app)
+
+#Form Class
+class NamerForm(FlaskForm):
+    name = StringField("Whats Your Name", validators=[DataRequired()]) 
+    submit = SubmitField("Submit")
+    
 #Create Model
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -24,8 +30,6 @@ class Users(db.Model):
     #Create A String
     def __repr__(self):
         return '<Name %r>' % self.name
-
-
 class UserForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
@@ -52,6 +56,18 @@ def page_not_found(e):
 def page_not_found(e):
         return render_template("simple-sidebar/dist/500.html"), 500
     
+#Create Name Page
+@app.route('/name', methods=['GET', 'POST'])
+def name():
+    name = None
+    form = NamerForm()
+    #Validate Form
+    if form.validate_on_submit():
+        name = form.name.data
+        form.name.data = ''
+    return render_template("simple-sidebar/dist/name.html", name = name, form = form)
+
+
 if __name__ == "__main__":
     app.run(host="127.0.0.2", port=8080, debug=True)
 
