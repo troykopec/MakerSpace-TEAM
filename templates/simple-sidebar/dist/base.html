@@ -21,13 +21,13 @@
             <!-- Sidebar-->
             <div class="border-end bg-white" id="sidebar-wrapper">
                 <!-- UTAMPA LOGO-->
-                <div class="sidebar-heading border-bottom bg-light"><img src="{{ url_for('static',filename='assets/UTampa_logo.png') }}" alt="UT" height = 50px width = auto></div>
+                <div class="sidebar-heading border-bottom bg-light"><a href="{{url_for('index')}}"><img src="{{ url_for('static',filename='assets/UTampa_logo.png') }}" alt="UT" height = 50px width = auto></a></div>
                 <div class="list-group list-group-flush">
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="r">Reserve a Machine</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Reserve a Machine</a>
                     <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Scheduled Reservations</a>
                     <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Training</a>
                     <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Events</a>
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Profile</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{url_for('user', name='John')}}">Profile</a>
                     <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">MakerSpace Status</a>
                 </div>
             </div>
@@ -57,6 +57,7 @@
                 </nav>
                 <!-- Page content-->
                 <div class="container-fluid">
+{% block content %}
                     <h1 class="mt-4">Simple Sidebar</h1>
                     <p>The starting state of the menu will appear collapsed on smaller screens, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will change.</p>
                     <p>
@@ -66,7 +67,9 @@
                         <code>#sidebarToggle</code>
                         ID which will toggle the menu when clicked.
                     </p>
+{% endblock %}
                 </div>
+
             </div>
         </div>
         <!-- Bootstrap core JS-->

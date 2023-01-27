@@ -35,12 +35,12 @@ class UserForm(FlaskForm):
 # Main Page
 @app.route('/')
 def index():
-    return render_template("simple-sidebar/dist/index.html")
+    return render_template("simple-sidebar/dist/base.html")
 
 # localhost:5000/user/John
 @app.route('/user/<name>')
 def user(name):
-    return render_template("simple-sidebar/dist/add_user.html", user_name=name)
+    return render_template("simple-sidebar/dist/user.html", user_name=name)
 
 #Invalid URL
 @app.errorhandler(404)
