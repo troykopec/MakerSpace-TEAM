@@ -219,7 +219,7 @@ def update(id):
                 form = form,
                 name_to_update = name_to_update)
     else:
-        return render_template("simple-sidebar/dist/dashboard.html",
+        return render_template("simple-sidebar/dist/update.html",
                 form = form,
                 name_to_update = name_to_update,
                 id = id)
