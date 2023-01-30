@@ -76,6 +76,10 @@
   }
 }
 
+.navbar-nav{
+  text-align: right;
+}
+
 body {
   margin: 0;
   font-family: var(--bs-body-font-family);
@@ -4055,6 +4059,11 @@ textarea.form-control-lg {
   flex-wrap: inherit;
   align-items: center;
   justify-content: space-between;
+}
+
+.navApp{
+  padding-top: 11px;
+  padding-bottom: 11px;
 }
 .navbar-brand {
   padding-top: 0.3125rem;

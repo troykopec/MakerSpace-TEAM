@@ -1,0 +1,35 @@
+{% extends 'simple-sidebar/dist/base.html' %}
+{% block content %}
+    
+
+    {% if email %}
+        <h1>Email: {{ email }}</h1>
+        <h1>Password: {{ password }}</h1>
+        <h2>I found this info: </h2> 
+        <br/>
+        Name: {{ pw_to_check.name }} <br/>
+        Email: {{ pw_to_check.email }} <br/>
+        PW: {{ pw_to_check.password_hash }} <br/>
+        Passed: {{ passed }}
+        <br/>
+    {% else %} 
+        <h1>Whats Your Email and Password?</h1>
+        <br/>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            {{ form.email.label(class="form-label") }}
+            {{ form.email(class="form-control") }}
+            <br/>
+            {{ form.password_hash.label(class="form-label") }}
+            {{ form.password_hash(class="form-control") }}
+            <br/>
+
+            {{ form.submit(class="btn btn-secondary") }}
+        </form>
+    {% endif %} 
+
+
+
+
+{% endblock %}
