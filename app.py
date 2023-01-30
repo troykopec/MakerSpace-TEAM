@@ -209,17 +209,17 @@ def update(id):
         try:
             db.session.commit()
             flash("User Updated Successfully")
-            return render_template("simple-sidebar/dist/update.html",
+            return render_template("simple-sidebar/dist/dashboard.html",
                 form = form,
                 name_to_update = name_to_update)
         except:
             db.session.commit()
             flash("Error! There was a problem. Try Again!")
-            return render_template("simple-sidebar/dist/update.html",
+            return render_template("simple-sidebar/dist/dashboard.html",
                 form = form,
                 name_to_update = name_to_update)
     else:
-        return render_template("simple-sidebar/dist/update.html",
+        return render_template("simple-sidebar/dist/dashboard.html",
                 form = form,
                 name_to_update = name_to_update,
                 id = id)
