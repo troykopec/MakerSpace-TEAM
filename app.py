@@ -83,6 +83,18 @@ def schedule():
 def status():
     return render_template("simple-sidebar/dist/status.html")
 
+#############################| Training Page |############################
+@app.route('/scheduled_reservations', methods=['GET', 'POST'])
+@login_required
+def scheduled_reservations():
+    return render_template("simple-sidebar/dist/scheduled_reservations.html")
+
+#############################| Training Page |############################
+@app.route('/training', methods=['GET', 'POST'])
+@login_required
+def training():
+    return render_template("simple-sidebar/dist/training.html")
+
 
 ########################| Create Dashboard Page |#######################
 @app.route('/dashboard', methods=['GET', 'POST'])
