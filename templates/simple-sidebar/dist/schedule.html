@@ -1,5 +1,7 @@
 {% extends 'simple-sidebar/dist/base.html' %}
 {% block content %}
+
+
 <style>
   div.scrollmenu {
     background-color: #333;
@@ -18,22 +20,27 @@
   div.scrollmenu a:hover {
     background-color: #777;
   }
+
+  .leftside {
+  display: inline-block;
+  width: 50%;
+}
+
+.rightside {
+  display: inline-block;
+  width: 50%;
+}
   </style>
 <br/>
 <h1>Reserve A Machine</h1>
 <br/>
 
 <!-- 3D-Printer -->
-
-<div class="card">
-  <div class="card-header">
-    <h4>3D-Printer</h4>
-  </div>
+<div class="leftside">
+<div class="card w-100">
   <div class="card-body">
-    <!-- Large modal -->
-    <div style = "position:absolute; left:100px; bottom:25px;">
-      Do you need to 3D print a model for a project? Look no further.
-   </div>
+    <h5 class="card-title">3D Printer</h5>
+    <p class="card-text">Do you need to 3D print a model for a project? Look no further.</p>
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">Reserve</button>
 
     <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
@@ -77,29 +84,21 @@
 
 <!-- Circuit Board Creator -->
 
-<div class="card">
-  <div class="card-header">
-    <h4>Circuit Board Creator</h4>
-  </div>
+<div class="card w-100">
   <div class="card-body">
+    <h5 class="card-title">Circuit Board Creator</h5>
+    <p class="card-text">Feel free to use the CNC Milling machine to create your needed circuit boards.</p>
     <a href="#" class="btn btn-primary">Reserve</a>
-    <div style = "position:absolute; left:100px; bottom:25px;">
-      Feel free to use the CNC Milling machine to create your needed circuit boards.
-   </div>
   </div>
 </div>
 <br/>
 
 <!-- Injection Mold -->
 
-<div class="card">
-  <div class="card-header">
-    <h4>Injection Mold</h4>
-  </div>
+<div class="card w-100">
   <div class="card-body">
-    <div style = "position:absolute; left:100px; bottom:25px;">
-      Feel like making a mold? This machine is perfect for you.
-   </div>
+    <h5 class="card-title">Injection Mold</h5>
+    <p class="card-text">Feel like making a mold? This machine is perfect for you.</p>
     <a href="#" class="btn btn-primary">Reserve</a>
   </div>
 </div>
@@ -107,14 +106,10 @@
 
 <!-- Vinyl Cutter -->
 
-<div class="card">
-  <div class="card-header">
-    <h4>Vinyl Cutter</h4>
-  </div>
+<div class="card w-100">
   <div class="card-body">
-    <div style = "position:absolute; left:100px; bottom:25px;">
-      This cuts vinyl... duh
-   </div>
+    <h5 class="card-title">Vinyl Cutter</h5>
+    <p class="card-text">This cuts vinyl... duh</p>
     <a href="#" class="btn btn-primary">Reserve</a>
   </div>
 </div>
@@ -122,14 +117,10 @@
 
 <!-- Heat Press -->
 
-<div class="card">
-  <div class="card-header">
-    <h4>Heat Press</h4>
-  </div>
+<div class="card w-100">
   <div class="card-body">
-    <div style = "position:absolute; left:100px; bottom:25px;">
-      This machine is used for mapping a print onto a shirt.
-   </div>
+    <h5 class="card-title">Heat Press</h5>
+    <p class="card-text">This machine is used for mapping a print onto a shirt.</p>
     <a href="#" class="btn btn-primary">Reserve</a>
   </div>
 </div>
@@ -137,14 +128,10 @@
 
 <!-- Laser Machine -->
 
-<div class="card">
-  <div class="card-header">
-    <h4>Laser Machine</h4>
-  </div>
+<div class="card w-100">
   <div class="card-body">
-    <div style = "position:absolute; left:100px; bottom:25px;">
-      Feel like blinding your friend? This is perfect for you.
-   </div>
+    <h5 class="card-title">Laser Machine</h5>
+    <p class="card-text">Feel like blinding your friend? This is perfect for you.</p>
     <a href="#" class="btn btn-primary">Reserve</a>
   </div>
 </div>
@@ -152,16 +139,26 @@
 
 <!-- Oscilloscope -->
 
-<div class="card">
-  <div class="card-header">
-    <h4>Oscilloscope</h4>
-  </div>
+<div class="card w-100">
   <div class="card-body">
-    <div style = "position:absolute; left:100px; bottom:25px;">
-      Man idk what tf this one does
-   </div>
+    <h5 class="card-title">Oscilloscope</h5>
+    <p class="card-text">Man idk what tf this shit does</p>
     <a href="#" class="btn btn-primary">Reserve</a>
   </div>
 </div>
 <br/>
+</div>
+
+<div class="rightside">
+<div class="card w-100">
+  <div class="card-body">
+    <h5 class="card-title">Inventory of Items</h5>
+    <p class="card-text">Dolphin Milk</p>
+    <p class="card-text">Apples</p>
+    <p class="card-text">Sponges</p>
+    <button type="button" class="btn btn-primary position-relative">
+      Alerts <span class="position-absolute top-0 start-100 translate-middle badge border border-light rounded-circle bg-danger p-2"><span class="visually-hidden">unread messages</span></span>
+    </button>
+  </div>
+</div>
 {% endblock %}
