@@ -1,146 +1,448 @@
 {% extends 'simple-sidebar/dist/base.html' %}
+
 {% block content %}
-<style>
-  div.scrollmenu {
-    background-color: #333;
-    overflow: auto;
-    white-space: nowrap;
-  }
+  <style>
+      @font-face {
+        font-family: 'MyFont';
+        src: url('/static/fonts/Baby Pool Light.ttf') format('truetype');
+      }
 
-  div.scrollmenu a {
-    display: inline-block;
-    color: white;
-    text-align: center;
-    padding: 14px;
-    text-decoration: none;
-  }
+      div.scrollmenu {
+        background-color: white;
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
 
-  div.scrollmenu a:hover {
-    background-color: #777;
-  }
+      div.scrollmenu a {
+        display: inline-flex; /* Use flexbox layout */
+        flex-direction: column; /* Set flex-direction to column */
+        justify-content: center; /* Center vertically */
+        align-items: center; /* Center horizontally */
+        background-color: white;
+        color: rgb(80, 80, 80);
+        text-align: center;
+        height: 100px;
+        width: 100px;
+        text-decoration: none;
+        margin-right: 10px; /* Add some margin-right */
+        border-radius: 8px; /* add border radius */
+        border: 1px solid #e8e8e8; /* add subtle offwhite border */
+        font-family: 'MyFont', sans-serif;
+        transition: all 0.3s ease; /* add transition effect */
+      }
+
+      div.scrollmenu a.selected {
+        border: 1px solid #00A6AE;
+        box-shadow: 2px 2px 2px #acebee;
+        color:black;
+        font-size: 14px; /* Decrease font size for weekday name */
+        font-weight: 600; /* Make weekday name bold */
+      }
+
+      div.scrollmenu a h3 {
+        font-size: 16px; /* Decrease weekday name font size */
+        margin-bottom: 5px; /* Add some margin below weekday name */
+        font-family: 'MyFont', sans-serif; /* add font family */
+      }
+
+      div.scrollmenu a h2 {
+        font-size: 36px; /* Increase day number font size */
+        font-family: 'MyFont', sans-serif; /* add font family */
+      }
+
+      div.scrollmenu a:hover,
+      div.scrollmenu a:focus {
+          background-color: #F5F5F5;
+          outline: none; /* Remove default focus outline */
+      }
+
+      div.scrollmenu a:hover:not(.selected) {
+          border-color: #D8D8D8; /* Change border color on hover */
+      }
+
+      .contain {
+        height: 75px;
+        width: auto;
+        padding-bottom: 100px;
+        padding-right: 5px;
+        padding-left: 5px;
+      }
+      
+      /* Add left and right arrows to the scroll menu */
+      div.scrollmenu__arrow {
+        position: absolute;
+        top: 68px;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.4)); /* Add shadow effect */
+      }
+
+      /* Position the left arrow on the left side of the scroll menu */
+      div.scrollmenu__arrow--left {
+        background: url('/static/assets/arrowleft.png')  no-repeat center;
+        background-size: contain; /* Set the size of the arrow image */
+        left: 0;
+      }
+
+      /* Position the right arrow on the right side of the scroll menu */
+      div.scrollmenu__arrow--right {
+        background: url('/static/assets/arrowright.png')  no-repeat center; 
+        background-size: contain; /* Set the size of the arrow image */
+        right: 0;
+      }
+
+      /* Hide the arrows by default */
+      div.scrollmenu__arrow {
+        opacity: 0.5;
+        transition: opacity 0.3s ease;
+      }
+
+      /* Show the arrows on hover */
+      div.scrollmenu:hover div.scrollmenu__arrow {
+        opacity: 1;
+      }
+
+      button.time_select {
+        padding-top: 10px;
+        padding-left: 5px;
+        padding-right: 5px;
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: white;
+        color: rgb(80, 80, 80);
+        text-align: center;
+        text-decoration: none;
+        margin-right: 10px;
+        border-radius: 8px;
+        border: 1px solid #e8e8e8;
+        font-family: 'MyFont', sans-serif;
+        font-size: 26px;
+        transition: all 0.3s ease;
+        line-height: 1;
+      }
+
+      button.time_select.selected {
+        border: 1px solid #00A6AE;
+        box-shadow: 2px 2px 2px #acebee;
+        color:black;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      button.time_select:hover,
+      button.time_select:focus {
+        background-color: #F5F5F5;
+        outline: none;
+      }
+
+      button.time_select:hover:not(.selected) {
+        border-color: #D8D8D8;
+      }
+
   </style>
-<br/>
-<h1>Reserve A Machine</h1>
-<br/>
 
-<!-- 3D-Printer -->
+  <br>
+  <h1>Reserve A Machine</h1>
+  <br>
 
-<div class="card">
-  <div class="card-header">
-    <h4>3D-Printer</h4>
-  </div>
-  <div class="card-body">
-    <!-- Large modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">Reserve</button>
+  <!-- 3D-Printer -->
+  <div class="card">
+    <div class="card-header">
+      <h4>3D-Printer</h4>
+    </div>
+    <div class="card-body">
+      <!-- Large modal -->
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">Reserve</button>
 
-    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">3D-Printer</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="scrollmenu">
-              <a href="#home">Home</a>
-              <a href="#news">News</a>
-              <a href="#contact">Contact</a>
-              <a href="#about">About</a>
-              <a href="#support">Support</a>
-              <a href="#blog">Blog</a>
-              <a href="#tools">Tools</a>
-              <a href="#base">Base</a>
-              <a href="#custom">Custom</a>
-              <a href="#more">More</a>
-              <a href="#logo">Logo</a>
-              <a href="#friends">Friends</a>
-              <a href="#partners">Partners</a>
-              <a href="#people">People</a>
-              <a href="#work">Work</a>
+      <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">3D-Printer</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-</div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            
+            <div class="modal-body">
+              <div class="contain">
+                <div class="scrollmenu">
+                  <div class="scrollmenu__arrow scrollmenu__arrow--left"></div>
+                  {% for date, events_list in event.getDates().items(): %}    
+                    <a href="#home" class="event-button" data-event="{{ events_list|map(attribute='start')|map('format_time', '%I:%M %p')|list|tojson }}">                      
+                      <h3>{{ datetime.strptime((date)[0:19],"%Y-%m-%dT%H:%M:%S").strftime('%a') }}</h3>
+                      <h2>{{ datetime.strptime((date)[0:19],"%Y-%m-%dT%H:%M:%S").day }}</h2>
+                    </a>
+                  {% endfor %}
+                  <div class="scrollmenu__arrow scrollmenu__arrow--right"></div>
+                </div>
+              </div>
+              <hr>
+              <div class="button-container"></div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
           </div>
         </div>
       </div>
+
+
+      <script>
+          const scrollmenu = document.querySelector('.scrollmenu');
+          let isDragging = false;
+          let lastX;
+          let selected = null; 
+          const scrollMenu = document.querySelector('.scrollmenu');
+          const leftArrow = document.querySelector('.scrollmenu__arrow--left');
+          const rightArrow = document.querySelector('.scrollmenu__arrow--right');
+          const eventButtons = document.querySelectorAll('.event-button');
+          const buttonContainer = document.querySelector('.button-container');
+
+          eventButtons.forEach(button => {
+            button.addEventListener('click', () => {
+              // remove previously created buttons (if any)
+              buttonContainer.innerHTML = '';
+
+              const eventData = JSON.parse(button.dataset.event);
+              eventData.forEach(summary => {
+                const button = document.createElement('button');
+                button.textContent = summary;
+                button.classList.add('time_select');
+                buttonContainer.appendChild(button);
+              });
+            });
+          });
+
+
+          // add event listeners to left and right arrows
+          leftArrow.addEventListener('click', () => {
+            // get the first visible element in the scrollmenu
+            const firstVisibleElement = getFirstVisibleElement(scrollMenu);
+
+            // get the number of visible elements in the scrollmenu
+            const visibleElements = getVisibleElements(scrollMenu);
+
+            // get the width of the first visible element
+            const firstVisibleElementWidth = firstVisibleElement.offsetWidth;
+
+            // scroll to the left by the total width of the visible elements
+            scrollMenu.scrollTo({
+            left: scrollMenu.scrollLeft - ((firstVisibleElementWidth + 10) * (visibleElements + 1)),
+            behavior: 'smooth'
+            });
+          });
+
+          rightArrow.addEventListener('click', () => {
+            // get the first visible element in the scrollmenu
+            const firstVisibleElement = getFirstVisibleElement(scrollMenu);
+
+            // get the number of visible elements in the scrollmenu
+            const visibleElements = getVisibleElements(scrollMenu);
+
+            // get the width of the first visible element
+            const firstVisibleElementWidth = firstVisibleElement.offsetWidth;
+
+            // scroll to the right by the total width of the visible elements
+            scrollMenu.scrollTo({
+            left: scrollMenu.scrollLeft + ((firstVisibleElementWidth + 10) * (visibleElements + 1)),
+            behavior: 'smooth'
+            });
+          });
+
+          // helper function to get the first visible element in the scrollmenu
+          function getFirstVisibleElement(scrollMenu) {
+            const scrollMenuRect = scrollMenu.getBoundingClientRect();
+            const scrollMenuChildren = scrollMenu.children;
+
+            for (let i = 0; i < scrollMenuChildren.length; i++) {
+              const childRect = scrollMenuChildren[i].getBoundingClientRect();
+
+              if (childRect.left >= scrollMenuRect.left && childRect.right <= scrollMenuRect.right) {
+                return scrollMenuChildren[i];
+              }
+            }
+
+            return null;
+          }
+
+          // helper function to get the number of visible elements in the scrollmenu
+          function getVisibleElements(scrollMenu) {
+            const scrollMenuRect = scrollMenu.getBoundingClientRect();
+            const scrollMenuChildren = scrollMenu.children;
+            let visibleElements = 0;
+
+            for (let i = 0; i < scrollMenuChildren.length; i++) {
+              const childRect = scrollMenuChildren[i].getBoundingClientRect();
+
+              if (childRect.left >= scrollMenuRect.left && childRect.right <= scrollMenuRect.right) {
+                visibleElements++;
+              }
+            }
+
+            return visibleElements;
+          }
+
+
+
+          scrollmenu.addEventListener('mousedown', e => {
+            e.preventDefault(); // Prevents default behavior of selecting and dragging the element
+            isDragging = true;
+            lastX = e.clientX;
+          });
+
+          document.addEventListener('mouseup', e => {
+            isDragging = false;
+            scrollmenu.style.removeProperty('cursor'); // Remove cursor property
+          });
+
+          document.addEventListener('mousemove', e => {
+            if (isDragging) {
+              const delta = e.clientX - lastX;
+              scrollmenu.scrollLeft -= delta;
+              lastX = e.clientX;
+            }
+          });
+
+
+          // add click event listener to each item
+          const items = document.querySelectorAll('.scrollmenu a');
+          items.forEach(item => {
+            let startX;
+            let isDragging = false;
+
+            item.addEventListener('mousedown', e => {
+              startX = e.clientX;
+              isDragging = false;
+            });
+
+            item.addEventListener('mousemove', e => {
+              if (isDragging) {
+                e.preventDefault(); // prevent default dragging behavior
+              }
+              if (!isDragging && Math.abs(e.clientX - startX) > 5) {
+                isDragging = true;
+              }
+            });
+
+
+
+          let scrollTimeout = null;
+          let snapTarget = null;
+          let snapOffset = null;
+
+          scrollmenu.addEventListener('scroll', () => {
+            // Clear previous timeout to prevent multiple scrolls in rapid succession
+            clearTimeout(scrollTimeout);
+
+            // Find the snap target
+            const snapTargets = document.querySelectorAll('.scrollmenu a');
+            const containerWidth = scrollmenu.offsetWidth;
+            const containerLeft = scrollmenu.offsetLeft;
+            let minOffsetDiff = Infinity;
+            for (let i = 0; i < snapTargets.length; i++) {
+              const target = snapTargets[i];
+              const targetOffset = target.offsetLeft - containerLeft;
+              const offsetDiff = Math.abs(scrollmenu.scrollLeft - targetOffset);
+              const middleOffset = targetOffset + (target.offsetWidth / 2) - (containerWidth / 2);
+              const middleDiff = Math.abs(scrollmenu.scrollLeft - middleOffset);
+              if (middleDiff < minOffsetDiff) {
+                snapTarget = target;
+                snapOffset = middleOffset;
+                minOffsetDiff = middleDiff;
+              }
+            }
+
+            // Scroll to the snap target after a short delay
+            scrollTimeout = setTimeout(() => {
+              if (snapTarget !== null) {
+                if (window.innerWidth > 1082){
+                if (selected === snapTargets[0] || selected === snapTargets[1] || selected === snapTargets[2] || snapTargets[snapTargets.length - 1] || snapTargets[snapTargets.length - 2] || snapTargets[snapTargets.length - 3]) {
+                }
+                else {
+                scrollmenu.scrollTo({
+                  left: snapOffset,
+                  behavior: 'smooth'
+                });
+                // Clear previous selected item and add selected class to new item
+                if (selected) {
+                  selected.classList.remove('selected');
+                }
+                snapTarget.classList.add('selected');
+                selected = snapTarget;
+                snapTarget = null;
+                snapOffset = null;
+              }
+              } else {
+                if (selected === snapTargets[0] || selected === snapTargets[1] || snapTargets[snapTargets.length - 1] || snapTargets[snapTargets.length - 2]) {
+                }
+                else {
+                scrollmenu.scrollTo({
+                  left: snapOffset,
+                  behavior: 'smooth'
+                });
+                // Clear previous selected item and add selected class to new item
+                if (selected) {
+                  selected.classList.remove('selected');
+                }
+                snapTarget.classList.add('selected');
+                selected = snapTarget;
+                snapTarget = null;
+                snapOffset = null;
+              }
+              }
+
+
+              }
+            }, 100);
+          });
+
+            item.addEventListener('mouseup', e => {
+              if (!isDragging) { // select only if not dragging
+                if (selected) {
+                  selected.classList.remove('selected'); // remove selected class from previous selection
+                }
+                item.classList.add('selected'); // add selected class to current selection
+                selected = item; // set selected item to current selection
+                centerSelectedElement()
+              }
+              isDragging = false;
+            });
+
+            item.addEventListener('mouseleave', e => {
+              isDragging = false;
+            });
+          });
+
+
+
+
+          function centerSelectedElement() {
+            const containerWidth = scrollmenu.offsetWidth;
+            const scrollLeft = scrollmenu.scrollLeft;
+            const itemOffsetLeft = selected.offsetLeft - scrollmenu.offsetLeft;
+            const itemWidth = selected.offsetWidth;
+
+            let centerOffset = containerWidth / 2 - itemWidth / 2;
+            if (itemOffsetLeft + itemWidth / 2 < containerWidth / 2) {
+              centerOffset = itemOffsetLeft - centerOffset;
+            } else {
+              centerOffset = itemOffsetLeft + itemWidth / 2 - containerWidth / 2;
+            }
+
+            scrollmenu.scrollTo({
+              left: centerOffset,
+              behavior: 'smooth'
+            });
+          }
+      </script>
+
     </div>
-
   </div>
-</div>
-<br/>
-
-<!-- Circuit Board Creator -->
-
-<div class="card">
-  <div class="card-header">
-    <h4>Circuit Board Creator</h4>
-  </div>
-  <div class="card-body">
-    <a href="#" class="btn btn-primary">Reserve</a>
-  </div>
-</div>
-<br/>
-
-<!-- Injection Mold -->
-
-<div class="card">
-  <div class="card-header">
-    <h4>Injection Mold</h4>
-  </div>
-  <div class="card-body">
-    <a href="#" class="btn btn-primary">Reserve</a>
-  </div>
-</div>
-<br/>
-
-<!-- Vinyl Cutter -->
-
-<div class="card">
-  <div class="card-header">
-    <h4>Vinyl Cutter</h4>
-  </div>
-  <div class="card-body">
-    <a href="#" class="btn btn-primary">Reserve</a>
-  </div>
-</div>
-<br/>
-
-<!-- Heat Press -->
-
-<div class="card">
-  <div class="card-header">
-    <h4>Heat Press</h4>
-  </div>
-  <div class="card-body">
-    <a href="#" class="btn btn-primary">Reserve</a>
-  </div>
-</div>
-<br/>
-
-<!-- Laser Machine -->
-
-<div class="card">
-  <div class="card-header">
-    <h4>Laser Machine</h4>
-  </div>
-  <div class="card-body">
-    <a href="#" class="btn btn-primary">Reserve</a>
-  </div>
-</div>
-<br/>
-
-<!-- Oscilloscope -->
-
-<div class="card">
-  <div class="card-header">
-    <h4>Oscilloscope</h4>
-  </div>
-  <div class="card-body">
-    <a href="#" class="btn btn-primary">Reserve</a>
-  </div>
-</div>
-<br/>
 {% endblock %}

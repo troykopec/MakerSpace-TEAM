@@ -5,6 +5,26 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from webforms import LoginForm, UserForm, PasswordForm
+import sys
+sys.path.append('MakerSpace/Google_API')
+from Google_API import quickstart
+import json
+
+
+
+from time import *
+import calendar
+
+
+import os.path
+
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+
+
 
 #############################
 #######| Create App |########
@@ -41,6 +61,15 @@ def load_user(user_id):
 #############################| WEBPAGES |###############################
 ########################################################################
 
+@app.template_filter('tojson')
+def tojson(value):
+    return json.dumps(value)
+
+@app.template_filter()
+def format_time(value, format='%Y-%m-%d %H:%M:%S'):
+    date_str = value['dateTime']
+    return datetime.strptime(date_str[:19], '%Y-%m-%dT%H:%M:%S').strftime(format)
+
 #############################| Signup Page |############################
 @app.route('/user/add', methods=['GET', 'POST'])
 def add_user():
@@ -74,7 +103,12 @@ def add_user():
 @app.route('/schedule', methods=['GET', 'POST'])
 @login_required
 def schedule():
-    return render_template("simple-sidebar/dist/schedule.html")
+    
+    print(quickstart.getDates())
+    
+    return render_template("simple-sidebar/dist/schedule.html",
+    event = quickstart,
+    datetime = datetime)
 
 
 #############################| Status Page |############################
