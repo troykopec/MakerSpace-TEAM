@@ -1,10 +1,128 @@
-{% extends 'simple-sidebar/dist/base.html' %} 
+{% extends 'simple-sidebar/dist/base.html' %}
 
 {% block content %}
 
+<!-- Creating a Container based on BootStrap that will contain all training pages -->
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+          <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav">
+                <!-- Creating the Sub-Pages that will be used for training and their names & href -->
+                <li class="nav-item">
+                  <a class="nav-link" aria-current="page" href="#page1">3D Printer</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#page2">Vacuum Former</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#page3">Vinyl Cutter</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#page4">Heat Press</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#page5">Soldering Station</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#page6">Electronics Station</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div id="main-content"></div>
+      </div>
+    </div>
+  </div>
+<!-- Scripts will contain the content pages will have, typically a video and a general description and the ability to navigate between them, displaying only said sub-page -->
+  <script>
+    const page1Content = `
+  <div style="display: flex; justify-content: center;">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <div style="text-align: left; margin: 20px;">
+    <p>Two Makerbot Replicator+ single extruder 3D printers support fabrication of designs up to 11.6” by 7.6” by 6.5” high (573 in3) with PLA, tough PLA, and other filaments. Using fused filament fabrication technology, they feature a flexible grip surface (non-heated bed) and 100 micron layer resolution. These 3D printers are great for rough 3D prototyping and are accessed through desktop computers in the Makerspace.</p>
+    <p>One Ultimaker S3 dual extruder 3D printer supports fabrication of designs up to 9” by 7.4” by 7.9” high (526 in3) with PLA, tough PLA, Nylon, ABS, CPE, and other filaments. Using fused filament fabrication technology, it features a heated glass surface and 20 to 600 micron layer resolution. This 3D printer is great for polished designs and is accessed via USB.</p>
+  </div>
+`;
+    const page2Content = `
+  <div style="display: flex; justify-content: center;">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <div style="text-align: left; margin: 20px;">
+    <p>The Formech Compac Mini desktop vacuum former quickly shapes HIPS, ABS, PETG,
+and other plastic sheets in the form of an existing 3D design. It has a forming area of 11”
+by 9” and has a maximum draw depth of 5.5”.
+</p>
+  </div>
+`;
+    const page3Content = `
+  <div style="display: flex; justify-content: center;">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <div style="text-align: left; margin: 20px;">
+    <p>The Roland CAMM-1 GS-24 desktop cutter custom cuts vinyl, heat transfer material,
+and more, from 2” to 27.5” wide (but also supports oversized designs using a novel
+tiling function).</p>
+  </div>
+`;
+    const page4Content = `
+  <div style="display: flex; justify-content: center;">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <div style="text-align: left; margin: 20px;">
+    <p>The PowerPress heat press can heat seal designs up to 15” by 15” onto fabrics (natural
+or synthetic), ceramic, some plastics, and more.</p>
+  </div>
+`;
+    const page5Content = `
+  <div style="display: flex; justify-content: center;">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <div style="text-align: left; margin: 20px;">
+    <p>Three soldering stations allow students to populate custom milled printed circuit boards
+with electronic components.</p>
+  </div>
+`;
+    const page6Content = `
+  <div style="display: flex; justify-content: center;">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <div style="text-align: left; margin: 20px;">
+    <p>An oscilloscope, several DC power supplies, a function generator, and both bench and
+handheld digital multi-meters support the testing and powering of electronic circuits
+fabricated by students.</p>
+  </div>
+`;
+    const mainContent = document.querySelector('#main-content');
 
-
-<!-- CONTENT IN BETWEEN TWO BLOCKS-->
-
-
+    document.querySelector('a[href="#page1"]').addEventListener('click', function() {
+      mainContent.innerHTML = page1Content;
+    });
+    document.querySelector('a[href="#page2"]').addEventListener('click', function() {
+      mainContent.innerHTML = page2Content;
+    });
+    document.querySelector('a[href="#page3"]').addEventListener('click', function() {
+      mainContent.innerHTML = page3Content;
+    });
+    document.querySelector('a[href="#page4"]').addEventListener('click', function() {
+      mainContent.innerHTML = page4Content;
+    });
+    document.querySelector('a[href="#page5"]').addEventListener('click', function() {
+      mainContent.innerHTML = page5Content;
+    });
+    document.querySelector('a[href="#page6"]').addEventListener('click', function() {
+      mainContent.innerHTML = page6Content;
+    });
+  </script>
 {% endblock %}
