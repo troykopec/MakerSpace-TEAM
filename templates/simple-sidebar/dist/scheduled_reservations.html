@@ -1,10 +1,79 @@
-{% extends 'simple-sidebar/dist/base.html' %} 
 
+
+
+{% extends 'simple-sidebar/dist/base.html' %} 
 {% block content %}
 
+<br/>
 
+<style>
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
 
-<!-- CONTENT IN BETWEEN TWO BLOCKS-->
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
 
+  th {
+    background-color: #f2f2f2;
+  }
+
+  button {
+    padding: 5px 10px;
+    border-radius: 3px;
+    background-color: #f44336;
+    color: #fff;
+    border: none;
+  }
+</style>
+
+<h1 class="display-5">Reservations</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Machines</th>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Cancel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>3D-Printer</td>
+      <td>2023-03-16</td>
+      <td>12:00 PM</td>
+      <td><button>Cancel</button></td>
+    </tr>
+    <tr>
+      <td>Circuit Board Creator</td>
+      <td>2023-03-17</td>
+      <td>3:00 PM</td>
+      <td><button>Cancel</button></td>
+    </tr>
+    <tr>
+      <td>Injection Mold</td>
+      <td>2023-03-18</td>
+      <td>5:00 PM</td>
+      <td><button>Cancel</button></td>
+    </tr>
+    <tr>
+      <td>Vinyl Cutter</td>
+      <td>2023-03-19</td>
+      <td>5:30 PM</td>
+      <td><button>Cancel</button></td>
+    </tr>
+    <tr>
+      <td>Heat Press</td>
+      <td>2023-03-20</td>
+      <td>6:00 PM</td>
+      <td><button>Cancel</button></td>
+    </tr>
+  </tbody>
+</table>
 
 {% endblock %}
