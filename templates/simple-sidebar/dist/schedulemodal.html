@@ -1,0 +1,6 @@
+{% for date, events_list in event.getDates().items(): %}    
+                    <a href="#home" class="event-button" data-event="{{ events_list|map(attribute='start')|map('format_time', '%I:%M %p')|list|tojson }}">                      
+                      <h3>{{ datetime.strptime((date)[0:19],"%Y-%m-%dT%H:%M:%S").strftime('%a') }}</h3>
+                      <h2>{{ datetime.strptime((date)[0:19],"%Y-%m-%dT%H:%M:%S").day }}</h2>
+                    </a>
+{% endfor %}

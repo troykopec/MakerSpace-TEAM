@@ -46,15 +46,15 @@ def getDates():
             'location': '800 Howard St., San Francisco, CA 94103',
             'description': 'A chance to hear more about Google\'s developer products.',
             'start': {
-                'dateTime': '2023-02-28T09:00:00-07:00',
+                'dateTime': '2023-03-15T12:00:00-07:00',
                 'timeZone': 'America/Los_Angeles',
             },
             'end': {
-                'dateTime': '2023-02-28T11:00:00-07:00',
+                'dateTime': '2023-03-15T14:00:00-07:00',
                 'timeZone': 'America/Los_Angeles',
             },
             'recurrence': [
-                'RRULE:FREQ=DAILY;COUNT=1'
+                'RRULE:FREQ=DAILY;COUNT=31'
             ],
             'reminders': {
                 'useDefault': False,

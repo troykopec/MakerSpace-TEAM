@@ -103,10 +103,14 @@ def add_user():
 @app.route('/schedule', methods=['GET', 'POST'])
 @login_required
 def schedule():
-    
-    print(quickstart.getDates())
-    
     return render_template("simple-sidebar/dist/schedule.html",
+    event = quickstart,
+    datetime = datetime)
+
+@app.route('/schedulemodal', methods=['GET', 'POST'])
+@login_required
+def schedulemodal():
+    return render_template("simple-sidebar/dist/schedulemodal.html",
     event = quickstart,
     datetime = datetime)
 
