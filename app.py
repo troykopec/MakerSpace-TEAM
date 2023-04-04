@@ -5,6 +5,9 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from webforms import LoginForm, UserForm, PasswordForm
+from flask import render_template, request
+from twilio.rest import Client
+
 
 #############################
 #######| Create App |########
@@ -83,11 +86,13 @@ def schedule():
 def status():
     return render_template("simple-sidebar/dist/status.html")
 
-#############################| Training Page |############################
+#############################| Scheduled Reservations |############################
 @app.route('/scheduled_reservations', methods=['GET', 'POST'])
 @login_required
 def scheduled_reservations():
     return render_template("simple-sidebar/dist/scheduled_reservations.html")
+
+
 
 #############################| Training Page |############################
 @app.route('/training', methods=['GET', 'POST'])
@@ -101,7 +106,6 @@ def training():
 @login_required
 def dashboard():
     return render_template("simple-sidebar/dist/dashboard.html")
-
 
 ########################| Delete Database Record |######################
 @app.route('/delete/<int:id>')
@@ -136,6 +140,29 @@ def delete(id):
 @app.route('/')
 def index():
     return render_template("simple-sidebar/dist/base.html")
+
+
+
+##########################| Function for Emergency Button Feature |#########################
+@app.route("/contact", methods = ['GET', 'POST'])
+def contact():
+    # Your Account SID from twilio.com/console
+    account_sid = "ACbc855018324a2b88daa90916999cef56"
+    # Your Auth Token from twilio.com/console
+    auth_token  = "de29e1bdf169dea94eab240b1d7ee42e"
+
+    client = Client(account_sid, auth_token)
+
+    message = client.messages.create(
+    #12032400741 Dr.Lori Number
+    to="+18134408766", 
+    from_="+18884955046",
+    body="There is a serious problem in the Makerspace!")
+
+    print(message.sid)
+
+    return render_template("simple-sidebar/dist/base.html")
+
 
 
 ##########################| Create Login Page |#########################
