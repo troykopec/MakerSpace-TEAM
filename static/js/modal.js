@@ -9,27 +9,99 @@
           const eventButtons = document.querySelectorAll('.event-button');
           const buttonContainer = document.querySelector('.button-container');
 
+          let reservations = [];
+          
+          
+            fetch('/get_all_reservations')
+              .then(response => response.json())
+              .then(data => {
+                reservations = data;
+              })
+              .catch(error => {
+                console.error('Error:', error);
+              });
+          
+
+
           eventButtons.forEach(button => {
             button.addEventListener('click', () => {
               // remove previously created buttons (if any)
               buttonContainer.innerHTML = '';
           
               const eventData = JSON.parse(button.dataset.event);
-              eventData.forEach(summary => {
-                const button = document.createElement('button');
-                button.textContent = summary;
-                button.classList.add('time_select');
-                button.addEventListener('click', () => {
-                  // remove the 'select' class from all buttons
-                  buttonContainer.querySelectorAll('.time_select').forEach(btn => {
-                    btn.classList.remove('selected');
+              eventData.starts.forEach((start, i) => {
+                
+                const event_date_start = new Date(start.replace(/-/g, '/'));
+                const event_date_end = new Date(eventData['ends'][i].replace(/-/g, '/'));
+                const machine_id = eventData['machine-id'];
+                const current_user = eventData['current-user'];
+                const event_hour_start = event_date_start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                const event_hour_end = event_date_end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                const event_hour = (event_hour_start.replace(" AM", "").replace(" PM", "")) + " - " + event_hour_end;
+                let reservationFound = false;
+                for (let i = 0; i < reservations.length; i++) {
+                  const reservation = reservations[i];
+                  if (reservation.machineid === machine_id && reservation.selected_date === start) {
+                    reservationFound = true;
+                    break;
+                  }
+                }
+                if (reservationFound) {
+                  const button = document.createElement('button');
+                  button.textContent = event_hour;
+                  button.classList.add('time_select', 'reserved');
+                  button.disabled = true;
+                  buttonContainer.appendChild(button);
+                } else {
+                  const button = document.createElement('button');
+                  button.textContent = event_hour;
+                  button.classList.add('time_select');
+                  button.dataset.eventDate_start = event_date_start; // set the event date as a data attribute on the button
+                  button.dataset.machineId = machine_id; // set the machine ID as a data attribute on the button
+                  button.dataset.currentUser = current_user;
+                  button.dataset.eventDate_end = event_date_end;
+                  button.addEventListener('click', () => {
+                    // remove the 'select' class from all buttons
+                    buttonContainer.querySelectorAll('.time_select').forEach(btn => {
+                      btn.classList.remove('selected');
+                    });
+                    // add the 'select' class to the clicked button
+                    button.classList.add('selected');
                   });
-                  // add the 'select' class to the clicked button
-                  button.classList.add('selected');
-                });
-                buttonContainer.appendChild(button);
+                  buttonContainer.appendChild(button);
+                }
               });
             });
+          });
+
+          document.getElementById('book-reservation').addEventListener('click', () => {
+            const selectedButton = document.querySelector('.time_select.selected');
+            if (selectedButton) {
+              const selectedTime_start = new Date(selectedButton.dataset.eventDate_start);
+              const selectedTime_end = new Date(selectedButton.dataset.eventDate_end);
+              const machineId = selectedButton.dataset.machineId;
+              const currentUser = selectedButton.dataset.currentUser;
+              // Send an AJAX request to Python backend
+              const xhr = new XMLHttpRequest();
+              xhr.open('POST', '/reserve/add', true);
+              xhr.setRequestHeader('Content-Type', 'application/json');
+              xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                  // handle the response from the server here
+                  window.location.href = '/scheduled_reservations';
+                  const response = JSON.parse(xhr.responseText);
+                  console.log(response);
+                }
+              };
+              xhr.send(JSON.stringify({ 
+                  event_date_start: selectedTime_start,
+                  event_date_end: selectedTime_end,
+                  machine_id: machineId,
+                  current_user: currentUser
+              }));
+            } else {
+              alert('Please select a time.');
+            }
           });
 
 

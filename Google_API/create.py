@@ -42,15 +42,13 @@ def getDates():
         service = build('calendar', 'v3', credentials=creds)
 
         event = {
-            'summary': 'Reservation',
-            'location': '800 Howard St., San Francisco, CA 94103',
-            'description': 'A chance to hear more about Google\'s developer products.',
+            'summary': 'Circuit Board Creator',
             'start': {
-                'dateTime': '2023-03-15T12:00:00-07:00',
+                'dateTime': '2023-03-27T12:00:00-04:00',
                 'timeZone': 'America/Los_Angeles',
             },
             'end': {
-                'dateTime': '2023-03-15T14:00:00-07:00',
+                'dateTime': '2023-03-27T14:00:00-04:00',
                 'timeZone': 'America/Los_Angeles',
             },
             'recurrence': [

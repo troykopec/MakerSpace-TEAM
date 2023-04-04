@@ -15,6 +15,49 @@
         width: 30%;
         float: right;
       }
+
+      #overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        display: none;
+      }
+
+      .spinner {
+        position: absolute;
+        top: 50%;
+        left: calc(50% - 20px);
+        width: 40px;
+        height: 40px;
+        background-color: #ffffff;
+
+        border-radius: 100%;
+        -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
+        animation: sk-scaleout 1.0s infinite ease-in-out;
+      }
+
+      @-webkit-keyframes sk-scaleout {
+        0% { -webkit-transform: scale(0) }
+        100% {
+          -webkit-transform: scale(2.0);
+          opacity: 0;
+        }
+      }
+
+      @keyframes sk-scaleout {
+        0% {
+          -webkit-transform: scale(0);
+          transform: scale(0);
+        } 100% {
+          -webkit-transform: scale(2.0);
+          transform: scale(2.0);
+          opacity: 0;
+        }
+      }
 </style>
 
 <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/modal.css') }}">
@@ -23,49 +66,23 @@
 <h1>Reserve A Machine</h1>
 <br/>
 
+<div id="overlay">
+  <div class="spinner"></div>
+</div>
+
 <!-- 3D-Printer -->
 <div class="leftside">
-  <div class="card w-100">
+
+    <div class="card w-100">
     <div class="card-body">
       <h5 class="card-title">3D Printer</h5>
       <p class="card-text">Do you need to 3D print a model for a project? Look no further.</p>
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">Reserve</button>
-
-      <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLongTitle">3D-Printer</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="contain">
-                <div class="scrollmenu">
-                  <div class="scrollmenu__arrow scrollmenu__arrow--left"></div>
-                  {% for date, events_list in event.getDates().items(): %}    
-                    <a href="#home" class="event-button" data-event="{{ events_list|map(attribute='start')|map('format_time', '%I:%M %p')|list|tojson }}">                      
-                      <h3>{{ datetime.strptime((date)[0:19],"%Y-%m-%dT%H:%M:%S").strftime('%a') }}</h3>
-                      <h2>{{ datetime.strptime((date)[0:19],"%Y-%m-%dT%H:%M:%S").day }}</h2>
-                    </a>
-                  {% endfor %}
-                  <div class="scrollmenu__arrow scrollmenu__arrow--right"></div>
-                </div>
-              </div>
-              <hr>
-              <div class="button-container"></div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Book Reservation</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <a href="#" class="btn btn-primary load-button" data-event-id="1">Reserve</a>
     </div>
+    <div id="content"></div>
   </div>
   <br/>
+  
 
   <!-- Circuit Board Creator -->
 
@@ -73,8 +90,9 @@
     <div class="card-body">
       <h5 class="card-title">Circuit Board Creator</h5>
       <p class="card-text">Feel free to use the CNC Milling machine to create your needed circuit boards.</p>
-      <a href="#" class="btn btn-primary">Reserve</a>
+      <a href="#" class="btn btn-primary load-button" data-event-id="2">Reserve</a>
     </div>
+    <div id="content"></div>
   </div>
   <br/>
 
@@ -84,8 +102,9 @@
     <div class="card-body">
       <h5 class="card-title">Injection Mold</h5>
       <p class="card-text">Feel like making a mold? This machine is perfect for you.</p>
-      <a href="#" class="btn btn-primary">Reserve</a>
+      <a href="#" class="btn btn-primary load-button" data-event-id="3">Reserve</a>
     </div>
+    <div id="content"></div>
   </div>
   <br/>
 
@@ -95,8 +114,9 @@
     <div class="card-body">
       <h5 class="card-title">Vinyl Cutter</h5>
       <p class="card-text">This cuts vinyl... duh</p>
-      <a href="#" class="btn btn-primary">Reserve</a>
+      <a href="#" class="btn btn-primary load-button" data-event-id="4">Reserve</a>
     </div>
+    <div id="content"></div>
   </div>
   <br/>
 
@@ -106,8 +126,9 @@
     <div class="card-body">
       <h5 class="card-title">Heat Press</h5>
       <p class="card-text">This machine is used for mapping a print onto a shirt.</p>
-      <a href="#" class="btn btn-primary">Reserve</a>
+      <a href="#" class="btn btn-primary load-button" data-event-id="5">Reserve</a>
     </div>
+    <div id="content"></div>
   </div>
   <br/>
 
@@ -117,8 +138,9 @@
     <div class="card-body">
       <h5 class="card-title">Laser Machine</h5>
       <p class="card-text">Feel like blinding your friend? This is perfect for you.</p>
-      <a href="#" class="btn btn-primary">Reserve</a>
+      <a href="#" class="btn btn-primary load-button" data-event-id="6">Reserve</a>
     </div>
+    <div id="content"></div>
   </div>
   <br/>
 
@@ -128,9 +150,10 @@
     <div class="card-body">
       <h5 class="card-title">Oscilloscope</h5>
       <p class="card-text">Man idk what this does</p>
-      <a href="#" class="btn btn-primary">Reserve</a>
+      <a href="#" class="btn btn-primary load-button" data-event-id="7">Reserve</a>
     </div>
   </div>
+  <div id="content"></div>
 <br/>
 </div>
 
@@ -157,5 +180,36 @@
   </div>
 </div>
 
-<script src= "{{ url_for('static',filename='js/modal.js')}}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<script>
+$(document).ready(function() {
+  $(".load-button").click(function() {
+    var event_id = $(this).data("event-id"); // Set the event ID here
+    
+    $("#overlay").show();
+    
+    $.ajax({
+      url: "/load_modal?event_id=" + event_id,
+      type: "GET",
+      success: function(response) {
+        $("#content").html(response);
+        $("#overlay").hide();
+        $("#test").modal('show'); // Show the Bootstrap modal
+      },
+      error: function(xhr) {
+        alert("Error loading content.");
+        $("#overlay").hide();
+      }
+    });
+  });
+
+  $(document).on("hidden.bs.modal", ".modal", function () {
+    $("#content").empty();
+    location.reload();
+  });
+});
+</script>
+
 {% endblock %}

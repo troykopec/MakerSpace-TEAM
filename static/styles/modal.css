@@ -13,6 +13,10 @@
         -ms-overflow-style: none;
       }
 
+      ::-webkit-scrollbar {
+        display: none;
+      }
+
       div.scrollmenu a {
         display: inline-flex; /* Use flexbox layout */
         flex-direction: column; /* Set flex-direction to column */
@@ -129,6 +133,16 @@
         border: 1px solid #00A6AE;
         box-shadow: 2px 2px 2px #acebee;
         color:black;
+      }
+
+      button.time_select.reserved:hover,
+      button.time_select.reserved:focus {
+        background-color: white;
+        cursor: default;
+      }
+
+      button.time_select.reserved {
+        opacity: 0.6;
       }
 
       button.time_select:hover,

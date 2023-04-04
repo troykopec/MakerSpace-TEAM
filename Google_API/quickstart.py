@@ -9,12 +9,20 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+import pytz
 
-start_date = datetime.utcnow().date()
+
+eastern = pytz.timezone('US/Eastern')
+utc_now = datetime.utcnow()
+eastern_now = utc_now.replace(tzinfo=pytz.utc).astimezone(eastern)
+start_date = eastern_now.date()
+
 end_date = start_date + timedelta(days=30)
 CALENDAR_ID = 'primary'
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/calendar']
+
+
 
 
 def getDates():
@@ -51,6 +59,7 @@ def getDates():
                                                 orderBy='startTime').execute()
             events = events_result.get('items', [])
             days_events[date_str] = events
+
 
         return days_events
         
