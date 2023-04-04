@@ -10,6 +10,7 @@
         <!-- Favicon-->
         <!-- EXAMPLE HOW TO ADD ASSETS-->
         <link rel="icon" type="image/x-icon"  href= "{{ url_for('static',filename='assets/favicon.ico') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/1F1F2x2Vg8bWl7G+gnbEz46ByK5WO9808fsf" crossorigin="anonymous" />
 
         <!-- Core theme CSS (includes Bootstrap)-->
         <!-- EXAMPLE HOW TO ADD CSS-->
@@ -25,8 +26,8 @@
                 <div class="list-group list-group-flush">
                     <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{url_for('schedule')}}">Reserve a Machine</a>
                     <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Scheduled Reservations</a>
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Training</a>
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Events</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{url_for('training')}}">Training</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Inventory</a>
                     <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{url_for('dashboard')}}">User Dashboard</a>
                     <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{url_for('status')}}">MakerSpace Status</a>
                 </div>
@@ -54,20 +55,276 @@
                 <!-- Page content-->
                 <div class="container-fluid">
 {% block content %}
-                    <h1 class="mt-4">Simple Sidebar</h1>
-                    <p>The starting state of the menu will appear collapsed on smaller screens, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will change.</p>
-                    <p>
-                        Make sure to keep all page content within the
-                        <code>#page-content-wrapper</code>
-                        . The top navbar is optional, and just for demonstration. Just create an element with the
-                        <code>#sidebarToggle</code>
-                        ID which will toggle the menu when clicked.
-                    </p>
-{% endblock %}
-                </div>
+                    <h1 class="mt-1 text-center">Welcome to the MakerSpace</h1>
+                    <!-- Add Bootstrap carousel component -->
+                    <div id="MainCarousel" class="carousel slide" data-bs-ride="carousel" style="max-height: 100vh; overflow: hidden;">
+                        <div class="carousel-inner">
+                          <div class="carousel-item active">
+                            <img src="{{ url_for('static',filename='assets/IMG_8102.jpg') }}" class="d-block w-100" alt="...">
+                          </div>
+                          <div class="carousel-item">
+                            <img src="{{ url_for('static',filename='assets/IMG_8103.jpg') }}" class="d-block w-100" alt="...">
+                          </div>
+                          <div class="carousel-item">
+                            <img src="{{ url_for('static',filename='assets/IMG_8108.jpg') }}" class="d-block w-100" alt="...">
+                          </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#MainCarousel" data-bs-slide="prev">
+                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#MainCarousel" data-bs-slide="next">
+                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                          <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
 
+                    <!-- Main Text -->
+
+                    <div class="card mt-4" style="border: 1px solid red;">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <h5 class="card-title m-0">About The</h5>
+                                <img src="{{ url_for('static',filename='assets/UTampa_logo.png') }}" alt="UTampa Logo" style="height: 1.8rem; width: auto; margin-left: 8px;">
+                            </div>
+                            <p class="card-text mt-2">
+                                The Makerspace on the 6th floor of UT's Technology Building provides Computer Science (CS) majors
+                                and minors with resources for rapid prototyping. It's a place where CS students can design, fabricate,
+                                assemble, and test their ideas related to projects in the Computer Science curriculum. It supports
+                                various phases of project development from design, prototyping, and testing to fabrication, assembly,
+                                and production. The Makerspace is currently only available to CS majors and minors.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- For Categories Below Main Image -->
+
+                    <div class="container mt-4">
+                        <div class="row">
+                            <!-- Category 1 -->
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div id="PrinterControls" class="carousel slide" data-bs-ride="carousel">
+                                        <div class="carousel-inner">
+                                            <div class="carousel-item active">
+                                                <img src="{{ url_for('static',filename='assets/IMG_8066.jpg') }}" class="card-img-top" alt="Category 2">
+                                            </div>
+                                            <div class="carousel-item">
+                                                <img src="{{ url_for('static',filename='assets/IMG_8040.jpg') }}" class="card-img-top" alt="Your second image alt text">
+                                            </div>
+                                        </div>
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#PrinterControls" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#PrinterControls" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
+                                    </div>
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">3D Printers</h5>
+                                        <ul class="list-unstyled">
+                                            <li>➼ 2x Makerbot Replicator+</li>
+                                            <li>➼ 1x Ultimaker S3</li>
+                                        </ul>
+                                        <div class="mt-auto d-flex justify-content-between w-100">
+                                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal3DPrinters">Learn More</a>
+                                            <a href="/schedule" class="btn btn-success">Reserve Now</a>
+                                        </div>  
+                                    </div>
+                                </div>
+                            </div>
+                                            <!-- 3D Printers Modal -->
+                    <div class="modal fade" id="modal3DPrinters" tabindex="-1" aria-labelledby="modal3DPrintersLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="modal3DPrintersLabel">3D Printers</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                            <!-- Add the information you want to display in the modal here -->
+                            <p>
+                                ➼ Two Makerbot Replicator+ single extruder 3D printers support fabrication of designs up
+                                to 11.6” by 7.6” by 6.5” high (573 in3
+                                ) with PLA, tough PLA, and other filaments. Using
+                                fused filament fabrication technology, they feature a flexible grip surface (non-heated
+                                bed) and 100 micron layer resolution. These 3D printers are great for rough 3D
+                                prototyping and are accessed through desktop computers in the Makerspace.
+                                <br><br>
+                                ➼ One Ultimaker S3 dual extruder 3D printer supports fabrication of designs up to 9” by
+                                7.4” by 7.9” high (526 in3
+                                ) with PLA, tough PLA, Nylon, ABS, CPE, and other
+                                filaments. Using fused filament fabrication technology, it features a heated glass surface
+                                and 20 to 600 micron layer resolution. This 3D printer is great for polished designs and
+                                is accessed via USB.
+                              </p>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                            <!-- Category 2 -->
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div id="FabricationControls" class="carousel slide" data-bs-ride="carousel">
+                                        <div class="carousel-inner">
+                                            <div class="carousel-item active">
+                                                <img src="{{ url_for('static',filename='assets/IMG_8070.jpg') }}" class="card-img-top" alt="Category 2">
+                                            </div>
+                                            <div class="carousel-item">
+                                                <img src="{{ url_for('static',filename='assets/IMG_8079.jpg') }}" class="card-img-top" alt="Your second image alt text">
+                                            </div>
+                                            <div class="carousel-item">
+                                                <img src="{{ url_for('static',filename='assets/IMG_8096.jpg') }}" class="card-img-top" alt="Your third image alt text">
+                                            </div>
+                                        </div>
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#FabricationControls" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#FabricationControls" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
+                                    </div>
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">Fabrication</h5>
+                                        <ul class="list-unstyled">
+                                            <li>➼ Pro Desktop Lasers</li>
+                                            <li>➼ CNC Machine</li>
+                                            <li>➼ Vacuum Former</li>
+                                            <li>➼ Vinyl Cutter</li>
+                                            <li>➼ Heat Press</li>
+                                        </ul>
+                                        <div class="mt-auto d-flex justify-content-between w-100">
+                                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalFabrication">Learn More</a>
+                                            <a href="/schedule" class="btn btn-success">Reserve Now</a>
+                                        </div>  
+                                    </div>
+                                </div>
+                            </div>
+
+                                    <!-- Fabrication Modal -->
+                            <div class="modal fade" id="modalFabrication" tabindex="-1" aria-labelledby="modalFabricationLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                    <h5 class="modal-title" id="modalFabricationLabe">Fabrication</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                    <!-- Add the information you want to display in the modal here -->
+                                    <p>
+                                        ◦ Lasers<br>
+                                        ➼ Two Glowforge Pro desktop lasers enable cutting and engraving of wood, acrylic, glass,
+                                            fabric, cardboard, leather, and some metals. They accommodate stock that is 20” wide
+                                            by 12” long or greater, at a maximum height of 2”. The lasers can be dangerous and can
+                                            only be accessed through a Makerspace worker.
+                                        <br><br>
+                                        ◦ CNC machine<br>
+                                        ➼ The Bantam Tools Desktop CNC milling machine allows milling of wood, many metals
+                                            (but is optimized for aluminum), FR-1 copper-clad PCB (printed circuit board) blanks,
+                                            and more. It supports designs up to 7” by 9” by 3.3” high (208 in3
+                                            ). It can be used to
+                                            fabricate custom PCBs. The CNC milling machine can be dangerous and can only be
+                                            accessed through a Makerspace worker.
+                                        <br><br>
+                                        ◦ Vacuum former<br>
+                                        ➼ The Formech Compac Mini desktop vacuum former quickly shapes HIPS, ABS, PETG,
+                                            and other plastic sheets in the form of an existing 3D design. It has a forming area of 11”
+                                            by 9” and has a maximum draw depth of 5.5”.
+                                        <br><br>
+                                        ◦ Vinyl cutter<br>
+                                        ➼ The Roland CAMM-1 GS-24 desktop cutter custom cuts vinyl, heat transfer material,
+                                            and more, from 2” to 27.5” wide (but also supports oversized designs using a novel
+                                            tiling function).
+                                        <br><br>
+                                        ◦ Heat press<br>
+                                        ➼ The PowerPress heat press can heat seal designs up to 15” by 15” onto fabrics (natural or synthetic), ceramic, some plastics, and more.
+                                      </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Category 3 -->
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div id="ProductionControls" class="carousel slide" data-bs-ride="carousel">
+                                        <div class="carousel-inner">
+                                            <div class="carousel-item active">
+                                                <img src="{{ url_for('static',filename='assets/IMG_8089.jpg') }}" class="card-img-top" alt="Category 2">
+                                            </div>
+                                            <div class="carousel-item">
+                                                <img src="{{ url_for('static',filename='assets/IMG_8091.jpg') }}" class="card-img-top" alt="Your second image alt text">
+                                            </div>
+                                        </div>
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#ProductionControls" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#ProductionControls" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
+                                    </div>
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">Production</h5>
+                                        <ul class="list-unstyled">
+                                            <li>➼ Portable Photo Studio</li>
+                                            <li>➼ HP DesignJet T230</li>
+                                        </ul>
+                                        <div class="mt-auto d-flex justify-content-between w-100">
+                                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalProduction">Learn More</a>
+                                            <a href="/schedule" class="btn btn-success">Reserve Now</a>
+
+                                        </div>                                
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Fabrication Modal -->
+                            <div class="modal fade" id="modalProduction" tabindex="-1" aria-labelledby="modalProductionLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                    <h5 class="modal-title" id="modalProductionLabel">Production</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                    <!-- Add the information you want to display in the modal here -->
+                                    <p>➼ A 2' x 2' x 2' portable photo studio that includes various color backgrounds, lighting, and a
+                                        camera allows students to take professional photos of their finished designs for use in
+                                        presentations, papers, newsletters, and advertisements for the CS program.
+                                        <br><br>
+                                        ➼ A HP DesignJet T230 large format printer provides support for printing designs up to 24”
+                                        wide. Students can use the printer for posters of their projects for presentations, for stickers
+                                        and labels that enhance their fabricated designs, and more.
+                                        </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+        
+{% endblock %}
+                        
+                </div>
+            </br>
             </div>
         </div>
+    </br>
+
         <!-- Bootstrap core JS-->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
@@ -75,6 +332,34 @@
         <!-- Core theme JS-->
         <!-- EXAMPLE HOW TO ADD JS-->
         <script src= "{{ url_for('static',filename='js/scripts.js')}}"></script>
+        
+        <script>
+            function submitLowInventory() {
+                let checkboxes = document.getElementsByClassName('form-check-input');
+                let selectedItems = [];
+        
+                for (let i = 0; i < checkboxes.length; i++) {
+                    if (checkboxes[i].checked) {
+                        selectedItems.push(checkboxes[i].value);
+                    }
+                }
+        
+                fetch('/report_low_inventory', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({items: selectedItems})
+                }).then(response => {
+                    if (response.ok) {
+                        document.getElementById('alertModal').style.display = 'block';
+                        document.getElementById('submitBtn').disabled = true;
+                    } else {
+                        console.error('Failed to report low inventory');
+                    }
+                });
+            }
+        </script>
 
     </body>
 </html>

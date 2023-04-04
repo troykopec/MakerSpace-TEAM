@@ -90,6 +90,11 @@ def status():
 def dashboard():
     return render_template("simple-sidebar/dist/dashboard.html")
 
+#############################| Training Page |############################
+@app.route('/training', methods=['GET', 'POST'])
+@login_required
+def training():
+    return render_template("simple-sidebar/dist/training.html")
 
 ########################| Delete Database Record |######################
 @app.route('/delete/<int:id>')
