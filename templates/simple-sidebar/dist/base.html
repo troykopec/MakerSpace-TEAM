@@ -28,9 +28,10 @@
                     <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{url_for('schedule')}}">Reserve a Machine</a>
                     <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{url_for('scheduled_reservations')}}">Scheduled Reservations</a>
                     <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{url_for('training')}}">Training</a>
-                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#!">Inventory</a>
                     <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{url_for('dashboard')}}">User Dashboard</a>
                     <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{url_for('status')}}">MakerSpace Status</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{url_for('add_post')}}">Create Help Requests</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{url_for('posts')}}">Help Requests</a>
                     {% if current_user.role == "Admin" %}
                     <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{url_for('admin_dashboard')}}">Admin Dashboard</a>
                     {% endif %}

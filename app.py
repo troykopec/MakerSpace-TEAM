@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-from webforms import LoginForm, UserForm, PasswordForm
+from webforms import LoginForm, UserForm, PasswordForm, PostForm
 import sys
 import pytz
 sys.path.append('MakerSpace/Google_API')
@@ -21,6 +21,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import pandas as pd
 import re
+from flask_ckeditor import CKEditor
 
 
 #############################
@@ -28,6 +29,8 @@ import re
 #############################
 app = Flask(__name__)
 app.app_context().push()
+# Add CKEditor
+ckeditor = CKEditor(app)
 
 #############################
 ####| Add MySQL Database |###
@@ -70,20 +73,27 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return Users.query.get(int(user_id))
 
-########################################################################    
-#############################| WEBPAGES |###############################
-########################################################################
+###########################################################################   
+#######################| WEBPAGES AND FUNCTIONS|###########################
+###########################################################################
 
-# Used in uploadFiles(); checks if file is csv
+
+########################| ALLOWED FILE CHECK|##############################
+# This function is called when a file is uploaded by an admin, it         #
+# checks the file type to make sure it is a CSV                           #
+###########################################################################
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Get the uploaded user upload files
+
+###########################| UPLOAD USERS |################################
+# This function proccesses the CSV into a readable file, saves it to      #
+# the server csv folder, and sends it to csv_to_db()                      #
+###########################################################################
 @app.route("/upload_users", methods=['POST'])
 @login_required
 def upload_users():
-    print(request.files['file'])
     if current_user.role == "Admin":
         uploaded_file = request.files['file']
         if uploaded_file and allowed_file(uploaded_file.filename):
@@ -98,7 +108,13 @@ def upload_users():
             return jsonify(message=message)
     return jsonify(error="Upload Failed")
 
-# Iterates through each row, adding each user to DB
+
+#############################| CSV TO DB |#################################
+# This function parses each row of the CSV file to extract the values     #
+# of 'name', 'email', 'password_hash', 'username', and 'role', in the     #
+# respective order they appear in the file. Then, it creates a user       #
+# with these values for each row found in the CSV.                        #
+###########################################################################
 def csv_to_db(filePath):
       # CVS Column Names
       col_names = ['name','email', 'password_hash' , 'username', 'role']
@@ -113,13 +129,14 @@ def csv_to_db(filePath):
           db.session.commit()
       flash("User(s) Added Successfully!")
       
-#--------------------------------------------------------------------------------------
-# Get the uploaded user upload files
+      
+#########################| UPLOAD TIME SLOTS |#############################
+# This function proccesses the CSV into a readable file, saves it to      #
+# the server csv folder, and sends it to csv_to_api()                     #
+###########################################################################
 @app.route("/upload_time_slots", methods=['POST'])
 @login_required
 def upload_time_slots():
-    print("hi")
-    print(request.files['dataFile'])
     if current_user.role == "Admin":
         uploaded_file = request.files['dataFile']
         if uploaded_file and allowed_file(uploaded_file.filename):
@@ -134,7 +151,13 @@ def upload_time_slots():
             return jsonify(message=message)
     return jsonify(error="Upload Failed")
 
-# Iterates through each row, adding each user to DB
+
+############################| CSV TO API |#################################
+# This function parses each row of the CSV file to extract the values     #
+# of 'year', 'month' , 'day', 'start_hour', 'end_hour', in the            #
+# respective order they appear in the file. Then, it creates a google     #
+# calendar event with these values for each row found in the CSV.         #
+###########################################################################
 def csv_to_api(filePath):
       # CVS Column Names
       col_names = ['year', 'month' , 'day', 'start_hour', 'end_hour']
@@ -150,16 +173,20 @@ def csv_to_api(filePath):
       flash("Time Slot(s) Created Successfully!")
 
 
+##########################| CONVERT TO JSON |##############################
 @app.template_filter('tojson')
 def tojson(value):
     return json.dumps(value)
 
+
+############################| FORMAT TIME |################################
 @app.template_filter()
 def format_time(value, format='%Y-%m-%d %H:%M:%S'):
     date_str = value['dateTime']
     return datetime.strptime(date_str[:19], '%Y-%m-%dT%H:%M:%S').strftime(format)
 
-#############################| Signup Page |###############################
+
+#############################| SIGNUP PAGE |###############################
 # If a GET request is made, the function renders an HTML template that    #
 # includes a form for adding a new user. If a POST request is made, the   #
 # function validates the data submitted in the form, checks if the        #
@@ -186,11 +213,14 @@ def add_user():
             db.session.add(user)
             db.session.commit()
             flash("User Added Successfully!")
+            return redirect(url_for('login'))
         else:
             if user is not None:
                 flash("This username is already in use!")
+                return redirect(url_for('add_user'))
             else:
                 flash("This email is already in use!")
+                return redirect(url_for('add_user'))
                 
         name = form.name.data
         form.name.data = ''
@@ -205,6 +235,12 @@ def add_user():
         our_users=our_users)
 
 
+###########################| ADMIN DASHBOARD |#############################
+# This page is designed to provide administrative tools for viewing all   #
+# reservations made by users, uploading new users via a CSV file, and     #
+# uploading Google API events via a CSV file. Access to this page is      #
+# restricted to administrators only.                                      #
+###########################################################################
 @app.route('/admin/dashboard', methods=['GET', 'POST'])
 @login_required
 def admin_dashboard():
@@ -216,7 +252,8 @@ def admin_dashboard():
     else:
         return redirect(url_for('dashboard'))
 
-##################| User Function for adding reservation |#################
+
+##################| USER FUNCTION FOR ADDING RESERVATION |#################
 # The function retrieves the necessary data from the request, checks if   #
 # the selected time slot is already reserved, creates a new reservation   #
 # in the database using SQLAlchemy, and returns a JSON response           #
@@ -250,7 +287,7 @@ def add_reservation():
     return json.dumps(response_data)
 
 
-#######################| Get User's Reservations |#########################
+#######################| GET USER'S RESERVATIONS |#########################
 # The function retrieves reservations from the database for the user      #
 # with the specified ID and formats the reservation dates to be           #
 # displayed in US/Eastern time. The formatted reservations are then       #
@@ -288,7 +325,7 @@ def get_user_reservations(id):
             return
 
 
-#####################| Get All Reservations (SQL) |########################
+#####################| GET ALL RESERVATIONS (SQL) |########################
 # The function retrieves all reservations from Reservations the           #
 # database using SQLAlchemy and formats the selected date to display in   #
 # Eastern Time. The reservations are then returned as a JSON object. If   #
@@ -322,7 +359,7 @@ def get_all_reservations():
         return ""
 
 
-#############| User Function for deleting reservations |###################
+################| USER FUNCTION FOR DELETING RESERVATIONS |################
 # This function allows users to delete their reservation from the         #
 # database. It retrieves the reservation ID and user ID from the POST     #
 # request, and if the user ID matches the ID of the currently logged in   #
@@ -350,8 +387,17 @@ def cancelReservation():
     return ''
     
 
-
-
+###################| ADMIN FUNCTION TO DELETE API EVENT |##################
+# This route function deletes a reservation made via the Google           #
+# Calendar API. It first checks if the current user is an admin and       #
+# then extracts the 'event_id' from the JSON data sent in the POST        #
+# request. It then uses this event_id to delete the corresponding event   #
+# from Google Calendar using the 'deleteDate' function defined in the     #
+# 'quickstart' module. Finally, it finds the corresponding reservation    #
+# object in the database using the event_id, deletes it from the          #
+# database and saves the changes. If the current user is not an admin,    #
+# it redirects them to the dashboard page.                                #
+###########################################################################
 @app.route('/delete_API_reservation', methods=['POST'])
 @login_required
 def delete_API_reservation():
@@ -365,17 +411,19 @@ def delete_API_reservation():
         db.session.delete(reservation_to_delete)
         db.session.commit()
     else:
-        return ''
-######################## | Calender Page | #############################
-# This function is responsible for rendering the HTML template for the #
-# calendar page, which displays a monthly calendar with available      #
-# time slots for each day. It takes the current user's scheduled events#
-# and available time slots as inputs and passes them to the HTML       #
-# template for rendering.                                              #
-#                                                                      #
-# It is also a route function that can handle both GET and POST        #
-# requests, and requires the user to be logged in to access the page.  #
-########################################################################
+        return redirect(url_for('dashboard'))
+    
+    
+#########################| CALENDAR PAGE |#################################
+# This function is responsible for rendering the HTML template for the    #
+# calendar page, which displays a monthly calendar with available         #
+# time slots for each day. It takes the current user's scheduled events   #
+# and available time slots as inputs and passes them to the HTML          #
+# template for rendering.                                                 #
+#                                                                         #
+# It is also a route function that can handle both GET and POST           #
+# requests, and requires the user to be logged in to access the page.     #
+###########################################################################
 @app.route('/schedule', methods=['GET', 'POST'])
 @login_required
 def schedule():
@@ -384,17 +432,16 @@ def schedule():
     datetime = datetime)
 
 
-
-###########################| Load Modal |###########################
-# This function is triggered when the user clicks the "reserve"    #
-# button on the HTML page to reserve a machine. It takes the ID    #
-# of the selected machine as an argument and retrieves its name    #
-# from a dictionary. The retrieved machine name is then passed to  #
-# a modal that displays a list of available dates for the user to  #
-# choose from. The code also includes other elements such as       #
-# rendering templates, generating event content, and adding        #
-# reservations.                                                    #
-####################################################################
+###########################| LOAD MODAL |##################################
+# This function is triggered when the user clicks the "reserve"           #
+# button on the HTML page to reserve a machine. It takes the ID           #
+# of the selected machine as an argument and retrieves its name           #
+# from a dictionary. The retrieved machine name is then passed to         #
+# a modal that displays a list of available dates for the user to         #
+# choose from. The code also includes other elements such as              #
+# rendering templates, generating event content, and adding               #
+# reservations.                                                           #
+###########################################################################
 @app.route('/load_modal')
 def load_modal():
     machine_id = request.args.get('event_id')
@@ -408,7 +455,19 @@ def load_modal():
     datetime = datetime,
     machine_name = machine_name)
 
-#############################| Status Page |############################
+
+##############################| STATUS PAGE |##############################
+# This code defines a route for a page that displays the current status   #
+# of all machines. It checks each machine type in MACHINE_TYPES and       #
+# queries the database to get all reservations made for that machine.     #
+# It then checks the start and end times of each reservation and          #
+# compares it to the current time. If the reservation is currently        #
+# active, the machine is marked as 'Closed'. If there are no              #
+# reservations for the machine, it is marked as 'Open'. The status of     #
+# each machine is added to a list status, which is then passed to the     #
+# status.html template along with MACHINE_TYPES. The template then        #
+# displays the status of each machine in a table.                         #
+###########################################################################
 @app.route('/status', methods=['GET', 'POST'])
 @login_required
 def status():
@@ -433,7 +492,10 @@ def status():
 
     return render_template("simple-sidebar/dist/status.html", status = status, machine_types = MACHINE_TYPES)
 
-#############################| Training Page |############################
+
+#####################| SCHEDULED RESERVATIONS PAGE |#######################
+# This page displays all of a users scheduled reservations                #
+###########################################################################
 @app.route('/scheduled_reservations', methods=['GET', 'POST'])
 @login_required
 def scheduled_reservations():
@@ -441,21 +503,48 @@ def scheduled_reservations():
                             get_user_reservations = get_user_reservations,
                             datetime = datetime)
 
-#############################| Training Page |############################
+
+#############################| TRAINING PAGE |#############################
+# This page displays a training page with info about each machine and     #
+# links to a training video                                               #
+###########################################################################
 @app.route('/training', methods=['GET', 'POST'])
 @login_required
 def training():
     return render_template("simple-sidebar/dist/training.html")
 
 
-########################| Create Dashboard Page |#######################
+########################| EXTRA MACHINE INFO PAGE |########################
+# This page displays a training page with info about each machine         #
+###########################################################################
+@app.route('/machineinfo', methods=['GET', 'POST'])
+@login_required
+def machine_info():
+    return render_template("simple-sidebar/dist/machineinfo.html")
+
+
+#########################| CREATE DASHBOARD PAGE |#########################
+# This page displays all of a users database information and allows for   #
+# the user to update information                                          #
+###########################################################################
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
     return render_template("simple-sidebar/dist/dashboard.html")
 
 
-########################| Delete Database Record |######################
+#########################| DELETE DATABASE RECORD |########################
+# This code defines a route for deleting a user with a given ID from      #
+# the database. The route is only accessible to logged-in users. If the   #
+# user to be deleted has the same ID as the currently logged-in user,     #
+# the function proceeds to delete the user from the database and          #
+# redirects to the add_user page with a flash message indicating          #
+# success. If the user to be deleted has a different ID than the          #
+# currently logged-in user, the function redirects to the add_user page   #
+# with a flash message indicating that there was a problem deleting the   #
+# user. The add_user page displays a form for adding new users and a      #
+# table of all existing users in the database.                            #
+###########################################################################
 @app.route('/delete/<int:id>')
 @login_required
 def delete(id):
@@ -481,14 +570,24 @@ def delete(id):
                 form = form,
                 name=name,
                 our_users=our_users)
-    
-##############################| Main Page |#############################
+
+
+##############################| MAIN PAGE |################################
 @app.route('/')
 def index():
     return render_template("simple-sidebar/dist/base.html")
 
 
-##########################| Create Login Page |#########################
+##############################| LOGIN PAGE |###############################
+# This code defines a Flask route for the login page and allows users     #
+# to login by submitting a form with their username and password. It      #
+# uses a LoginForm instance to validate the user's input and checks if    #
+# the user exists in the database. If the user exists and the password    #
+# is correct, the user is logged in and redirected to the dashboard       #
+# page. If the username or password is incorrect, an appropriate flash    #
+# message is displayed and the user is redirected back to the login       #
+# page.                                                                   #
+###########################################################################
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -507,7 +606,7 @@ def login():
     return render_template("simple-sidebar/dist/login.html", form = form)
 
 
-#########################| Create Logout Page |#########################
+###############################| LOGOUT PAGE |#############################
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
@@ -516,48 +615,30 @@ def logout():
     return redirect(url_for('login'))
 
 
-########################| Invalid URL Error Page |######################
+########################| INVALID URL ERROR PAGE |#########################
 @app.errorhandler(404)
 def page_not_found(e):
         return render_template("simple-sidebar/dist/404.html"), 404
 
 
-######################| Internal Server Error Page |####################
+######################| INTERNAL SERVER ERROR PAGE |#######################
 @app.errorhandler(500)
 def page_not_found(e):
         return render_template("simple-sidebar/dist/500.html"), 500
-    
-    
-######################| Password Test Page (Login) |####################
-@app.route('/test_pw', methods=['GET', 'POST'])
-def test_pw():
-    email = None
-    password = None
-    pw_to_check = None
-    passed = None
-    form = PasswordForm()
-    
-    #Validate Form
-    if form.validate_on_submit():
-        email = form.email.data
-        password = form.password_hash.data
-        # Clear Form
-        form.email.data = ''
-        form.password_hash.data = ''
-        # Lookup User By Email Address
-        pw_to_check = Users.query.filter_by(email=email).first()
-        # Check Hashed Password
-        passed = check_password_hash(pw_to_check.password_hash, password)
-        
-    return render_template("simple-sidebar/dist/test_pw.html",
-        email = email,
-        password=password,
-        pw_to_check = pw_to_check,
-        passed = passed,
-        form = form)
 
 
-########################| Update Database Record |######################
+#########################| UPDATE DATABASE RECORD |########################
+# This code defines a route for updating a user's information. The        #
+# route takes an id parameter that specifies the user to update. The      #
+# function first retrieves the user from the database using the id. If    #
+# the request method is POST, it updates the user's information with      #
+# the data from the form and commits the changes to the database. If      #
+# the update is successful, it redirects to the dashboard page and        #
+# flashes a success message. If there's an error, it flashes an error     #
+# message and returns the update page. If the request method is GET, it   #
+# renders the update page with the current user's information populated   #
+# in the form.                                                            #
+###########################################################################
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
 @login_required
 def update(id):
@@ -586,10 +667,131 @@ def update(id):
                 name_to_update = name_to_update,
                 id = id)
 
+#############################| DELETE POST |###############################
+# This code defines a Flask route for deleting a specific blog post       #
+# with the given id. It requires the user to be logged in and checks      #
+# whether the user is either the author of the post or an admin. If the   #
+# user is authorized to delete the post, it deletes the post from the     #
+# database and redirects the user to the page displaying all blog posts   #
+# with a success message. If there is an error while deleting the post,   #
+# it redirects the user to the page displaying all blog posts with an     #
+# error message. If the user is not authorized to delete the post, it     #
+# redirects the user to the page displaying all blog posts with an        #
+# error message.                                                          #
+###########################################################################
+@app.route('/posts/delete/<int:id>')
+@login_required
+def delete_post(id):
+    post_to_delete = Posts.query.get_or_404(id)
+    
+    if ( current_user.id == post_to_delete.post_userid or current_user.role == "Admin"):
+        try:
+                db.session.delete(post_to_delete)
+                db.session.commit()
 
+                # Return a message
+                flash("Blog Post Was Deleted!")
+                # Grab all the posts from the databas
+                posts = Posts.query.order_by(Posts.date_posted)
+                return redirect(url_for('posts', posts=posts))
+
+        except:
+                flash("Whoops! There was a problem deleting post, try again!")
+                # Grab all the posts from the databas
+                posts = Posts.query.order_by(Posts.date_posted)
+                return redirect(url_for('posts', posts=posts))
+    else:
+        flash("You cannot delete others posts!")
+        return redirect(url_for('posts'))
+
+#############################| SHOW POSTS |################################
+# Displays all posts onto the blog page, aslong as they have a location   #
+# of 'blog'.                                                              #
+###########################################################################
+@app.route('/posts')
+@login_required
+def posts():
+    # Grab all the posts from the database that are of location blog
+    posts = Posts.query.filter_by(location="blog").order_by(Posts.date_posted)
+    return render_template("simple-sidebar/dist/posts.html", posts=posts)
+
+##############################| VIEW POST |################################
+# Creates individual posts shown on the blog page                         #
+###########################################################################
+@app.route('/posts/<int:id>')
+@login_required
+def post(id):
+    post = Posts.query.get_or_404(id)
+    return render_template("simple-sidebar/dist/post.html", post=post)
+
+
+##############################| EDIT POST |################################
+# The function first checks whether the current user is the author of     #
+# the post or an admin, and if not, it redirects to the posts page. If    #
+# the user is authorized to edit the post, the function retrieves the     #
+# post from the database using its id and generates a form with the       #
+# current post data using the PostForm. The form is then displayed to     #
+# the user, and upon submission, the function validates the form data     #
+# and updates the post with the new data, commits the changes to the      #
+# database, and redirects to the post page with a success message. If     #
+# the form is not valid, the form is re-rendered with the invalid input   #
+# fields highlighted for correction.                                      #
+###########################################################################
+@app.route('/posts/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_post(id):
+    if ( current_user.id == Posts.query.get_or_404(id).post_userid or current_user.role == "Admin"):
+        post = Posts.query.get_or_404(id)
+        form = PostForm()
+        if form.validate_on_submit():
+            post.title = form.title.data
+            post.content = form.content.data
+            # Update Database
+            db.session.add(post)
+            db.session.commit()
+            flash("Post Has Been Updated!")
+            return redirect(url_for('post', id=post.id))
+        
+        form.title.data = post.title
+        #form.author.data = post.author
+        #form.slug.data = post.slug
+        form.content.data = post.content
+        return render_template('simple-sidebar/dist/edit_post.html', form=form)
+    else:
+        flash("You cannot edit others posts!")
+        return redirect(url_for('posts'))
     
     
-    
+#############################E#| ADD POST |################################
+# This code defines a route for adding a new blog post to the             #
+# application. The route is accessed via a GET or POST request. If the    #
+# form submitted via a POST request is validated, the data is added to    #
+# the database as a new blog post using the Posts class. After            #
+# successful submission, a message is displayed and the user is           #
+# redirected to the add_post page.                                        #
+###########################################################################
+@app.route('/add_post', methods=['GET', 'POST'])
+@login_required
+def add_post():
+    form = PostForm()
+
+    if form.validate_on_submit():
+        post = Posts(title=form.title.data, content=(form.content.data).replace("</p>", "").replace("<p>", ""), location=form.location.data, post_userid=current_user.id)
+        # Clear The Form
+        form.title.data = ''
+        form.content.data = ''
+        form.location.data = ''
+        # Add post data to database
+        db.session.add(post)
+        db.session.commit()
+
+        # Return a Message
+        flash("Blog Post Submitted Successfully!")
+
+    # Redirect to the webpage
+    return render_template("simple-sidebar/dist/add_post.html", form=form)
+
+
 ########################################################################    
 ##########################| DATABASE MODELS |###########################
 ########################################################################
@@ -626,6 +828,15 @@ class Reservations(db.Model):
     selected_date_start = db.Column(db.String(255))
     selected_date_end = db.Column(db.String(255))
     eventid = db.Column(db.String(255))
+
+##############################| Blog Post Model|#############################
+class Posts(db.Model ):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255))
+    content = db.Column(db.Text)
+    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+    location = db.Column(db.String(255))
+    post_userid = db.Column(db.Integer)
 
 ########################################################################    
 ################################| RUN |#################################
