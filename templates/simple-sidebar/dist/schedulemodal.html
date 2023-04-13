@@ -13,24 +13,23 @@
               <div class="scrollmenu">
                 <div class="scrollmenu__arrow scrollmenu__arrow--left"></div>
                 {% for date, events_list in event.getDates().items(): %}
-  {% set summary_list = [] %}
-  {% for event in events_list %}
-    {% if machine_name in event.summary %}
-      {% set _ = summary_list.append({'start': event.start, 'end': event.end, 'summary': event.summary}) %}
-    {% endif %}
-  {% endfor %}
-  {% if summary_list|length > 0 %}
-    <a href="#home" class="event-button" data-event="{{ {'starts': summary_list|map(attribute='start')|map('format_time', '%Y-%m-%d %I:%M %p')|list, 'ends': summary_list|map(attribute='end')|map('format_time', '%Y-%m-%d %I:%M %p')|list, 'machine-id': summary_list[0].summary, 'current-user': current_user.id } | tojson }}">
-      <h3>{{ datetime.strptime((date)[0:19],"%Y-%m-%dT%H:%M:%S").strftime('%a') }}</h3>
-      <h2>{{ datetime.strptime((date)[0:19],"%Y-%m-%dT%H:%M:%S").day }}</h2>
-    </a>
-  {% else %}
-    <a href="#home" class="event-button" data-event="{{ {'starts': [], 'ends': [], 'machine-id': '', 'current-user': ''} | tojson }}">
-      <h3>{{ datetime.strptime((date)[0:19],"%Y-%m-%dT%H:%M:%S").strftime('%a') }}</h3>
-      <h2>{{ datetime.strptime((date)[0:19],"%Y-%m-%dT%H:%M:%S").day }}</h2>
-    </a>
-  {% endif %}
-{% endfor %}
+                  {% set summary_list = [] %}
+                  {% for event in events_list %}
+                    {% if machine_name in event.summary %}
+                      {% set _ = summary_list.append({'start': event.start, 'end': event.end, 'summary': event.summary, 'event_id': event.id|string }) %}
+                    {% endif %}
+                  {% endfor %}
+                  {% if summary_list|length > 0 %}
+                    <a href="#home" class="event-button" data-event="{{ {'starts': summary_list|map(attribute='start')|map('format_time', '%Y-%m-%d %I:%M %p')|list, 'ends': summary_list|map(attribute='end')|map('format_time', '%Y-%m-%d %I:%M %p')|list, 'machine-id': summary_list[0].summary, 'current-user': current_user.id, 'event-id': (summary_list[0].event_id|string), 'is-admin': current_user.role } | tojson }}">                      <h3>{{ datetime.strptime((date)[0:19],"%Y-%m-%dT%H:%M:%S").strftime('%a') }}</h3>
+                      <h2>{{ datetime.strptime((date)[0:19],"%Y-%m-%dT%H:%M:%S").day }}</h2>
+                    </a>
+                  {% else %}
+                    <a href="#home" class="event-button" data-event="{{ {'starts': [], 'ends': [], 'machine-id': '', 'current-user': ''} | tojson }}">
+                      <h3>{{ datetime.strptime((date)[0:19],"%Y-%m-%dT%H:%M:%S").strftime('%a') }}</h3>
+                      <h2>{{ datetime.strptime((date)[0:19],"%Y-%m-%dT%H:%M:%S").day }}</h2>
+                    </a>
+                  {% endif %}
+                {% endfor %}
                 <div class="scrollmenu__arrow scrollmenu__arrow--right"></div>
               </div>
             </div>
@@ -39,7 +38,12 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            {% if current_user.role == "Admin" %}
+            <button type="button" class="btn btn-danger" id="del-reservation" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">Delete</button>
             <button type="button" class="btn btn-primary" id="book-reservation" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">Reserve</button>
+            {% else %}
+            <button type="button" class="btn btn-primary" id="book-reservation" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">Reserve</button>
+            {% endif %}
           </div>
         </div>
       </div>

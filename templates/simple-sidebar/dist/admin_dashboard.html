@@ -1,0 +1,410 @@
+{% extends 'simple-sidebar/dist/base.html' %}
+{% block content %}
+
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/all.min.css') }}">
+
+<style>
+    .custom-file-upload {
+      display: inline-block;
+      padding: 6px 12px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: #fff;
+      border-radius: 4px;
+      border: none;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+
+    .custom-file-upload:hover {
+      background-color: #0069d9;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+      background-color: #0069d9;
+      border-color: #0062cc;
+    }
+
+    .btn-primary:focus, .btn-primary:active {
+      background-color: #0062cc;
+      border-color: #005cbf;
+    }
+
+    .dropzone {
+      border: 2px dashed #007bff;
+      border-radius: 4px;
+      padding: 25px;
+      transition: background-color 0.2s;
+      text-align: center;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .dropzone:hover {
+      background-color: #f1f1f1;
+    }
+
+    .table-cell {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    border: 1px solid #ddd;
+    background-color: #f5f5f5;
+    transition: background-color 0.3s ease-in-out;
+  }
+
+  .table-cell:hover {
+    background-color: #d4d4d4;
+    cursor: pointer;
+  }
+
+  .cell-content {
+    font-size: 16px;
+    padding: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .table-cell:hover {
+      background-color: transparent;
+    }
+    
+    .cell-content {
+      font-size: 14px;
+      padding: 5px 10px;
+    }
+
+    @media screen and (max-width: 768px) {
+        .cell-content {
+        font-size: 10px;
+        }
+    }
+
+    @media screen and (max-width: 576px) {
+        .cell-content {
+        font-size: 8px;
+        }
+    }
+
+    .fa-file-csv {
+        transition: color 0.2s;
+    }
+
+    .fa-file-csv:hover {
+        color: red;
+    }
+    .table-container {
+        height: 300px;
+        overflow-y: auto;
+    }
+
+    thead {
+        position: sticky;
+        top: 0;
+        background-color: white;
+    }
+    .card-title {
+        position: sticky;
+        top: 0;
+        background-color: white;
+    }
+
+    .parent-container {
+        margin-top: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* additional styles for the parent container */
+    }
+
+    .no-reservations {
+        opacity: 0.4;
+        color: #000000;
+        /* additional styles for the h1 element */
+    }
+  </style>
+
+
+{% for message in get_flashed_messages() %}
+    <br/>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endfor %}  
+
+<br/>
+<h1 class="mt-1 text-center">Admin Dashboard</h1>
+
+<div class="container mt-4" >
+    <div class="row">
+        <!-- Category 1 -->
+        <div class="col-md-4" >
+            <div class="card w-100">
+                <div class="card-body">
+                <div class="card-title"><h5 class="card-title">Upload Users <i class="fa-solid fa-file-csv" title='CSV Format: [ name, email, password, username, role ]'></i></h5> </div>
+                  
+                  <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                    <div class="form-group">
+                      <div class="dropzone" id="dropzone">
+                        <i class="fa-solid fa-cloud-arrow-up fa-2xl"></i>
+                        <p class="mt-2 mb-0">Drag and drop your file here or</p>
+                        <label for="file-upload" class="custom-file-upload mt-2">
+                          <i class="fas fa-cloud-upload-alt"></i> Choose file
+                        </label>
+                      </div>
+                      <input id="file-upload" type="file" name="file" style="display: none;">
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Upload</button>
+                  </form>
+            
+                </div>
+                <div id="content"></div>
+              </div>
+        </br>
+        </div>
+    
+
+        <!-- Category 2 -->
+        <div class="col-md-4">
+          <div class="card w-100">
+            <div class="card-body">
+              <div class="card-title">
+                <h5 class="card-title">Upload Time Slots <i class="fa-solid fa-file-csv" title='CSV Format: [ year, month, day, start_hour, end_hour ]'></i></h5>
+              </div>
+        
+              <form method="POST" enctype="multipart/form-data" id="dataUploadForm">
+                <div class="form-group">
+                  <div class="dropzone" id="dataDropzone">
+                    <i class="fa-solid fa-cloud-arrow-up fa-2xl"></i>
+                    <p class="mt-2 mb-0">Drag and drop your file here or</p>
+                    <label for="data-file-upload" class="custom-file-upload mt-2">
+                      <i class="fas fa-cloud-upload-alt"></i> Choose file
+                    </label>
+                  </div>
+                  <input id="data-file-upload" type="file" name="dataFile" style="display: none;">
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">Upload</button>
+              </form>
+        
+            </div>
+            <div id="dataContent"></div>
+          </div>
+        </br>
+        </div>
+
+
+        <!-- Category 3 -->
+        <div class="col-md-4">
+
+
+        </br>
+        </div>
+</div>
+</div>
+
+
+  {% set reservations = get_user_reservations(current_user.id) %}
+  <div class="card">
+    <div class="card-body">
+    <div class="card-title"><h5 class="card-title">Upcoming User Scheduled Reservations <i class="fa-regular fa-calendar-minus"></i></h5></div>
+
+      <div class="table-container">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Machines</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Cancel</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for reservation in reservations: %}
+            <tr>
+              <td>{{ reservation.machineid }}</td>
+              <td>{{ datetime.strptime((reservation.selected_date_start),"%Y-%m-%d %I:%M %p").strftime('%Y-%m-%d') }}</td>
+              <td>{{ datetime.strptime(reservation.selected_date_start, "%Y-%m-%d %I:%M %p").strftime('%I:%M %p').replace(" AM", "").replace(" PM", "") }} - {{ datetime.strptime(reservation.selected_date_end, "%Y-%m-%d %I:%M %p").strftime('%I:%M %p') }}</td>
+              <td>
+                <form action="/cancel_reservation" method="POST">
+                  <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
+                  <input type="hidden" name="user_id" value="{{ reservation.userid }}">
+                  <button type="submit">Cancel</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% if not reservations %}
+<div class="parent-container">
+<h2 class = "no-reservations">No Scheduled Reservations</h2>
+</div>
+{% endif %}
+      </div>
+    </div>
+  </div>
+  <br/>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x"></script>
+
+<script>
+const dropzone = document.getElementById('dropzone');
+const form = document.getElementById('uploadForm');
+const fileInput = document.getElementById('file-upload');
+const fileNameText = dropzone.querySelector('p');
+const formData = new FormData();
+
+dropzone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dropzone.classList.add('dropzone--active');
+});
+
+dropzone.addEventListener('dragleave', (e) => {
+  e.preventDefault();
+  dropzone.classList.remove('dropzone--active');
+});
+
+dropzone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropzone.classList.remove('dropzone--active');
+  const file = e.dataTransfer.files[0];
+  handleFileUpload(file);
+});
+
+fileInput.addEventListener('change', () => {
+  const fileName = fileInput.value.split('\\').pop();
+  fileNameText.innerText = fileName;
+  const file = fileInput.files[0];
+  handleFileUpload(file);
+});
+
+document.getElementById('file-upload').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  const fileName = file.name;
+  fileNameText.innerText = fileName;
+  handleFileUpload(file);
+});
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/upload_users');
+  xhr.onreadystatechange = function() {
+  
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      window.location.href = '/admin/dashboard';
+    }
+  };
+  xhr.send(formData);
+});
+
+function handleFileUpload(file) {
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = () => {
+    const fileContent = reader.result;
+    const fileInput = document.createElement('input');
+    fileInput.setAttribute('type', 'hidden');
+    fileInput.setAttribute('name', 'fileContent');
+    fileInput.setAttribute('value', fileContent);
+    form.appendChild(fileInput);
+
+    for (const key of formData.keys()) {
+        formData.delete(key);
+    }
+    formData.append('file', file);
+
+    // Update the text in the dropzone element
+    const fileName = file.name;
+    console.log(fileName)
+    dropzone.querySelector('p').innerText = fileName;
+  };
+}
+</script>
+
+<script>
+
+const dataDropzone = document.getElementById('dataDropzone');
+const dataForm = document.getElementById('dataUploadForm');
+const dataFileInput = document.getElementById('data-file-upload');
+const dataFileNameText = dataDropzone.querySelector('p');
+const dataFormData = new FormData();
+
+dataDropzone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dataDropzone.classList.add('dropzone--active');
+});
+
+dataDropzone.addEventListener('dragleave', (e) => {
+  e.preventDefault();
+  dataDropzone.classList.remove('dropzone--active');
+});
+
+dataDropzone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dataDropzone.classList.remove('dropzone--active');
+  const file = e.dataTransfer.files[0];
+  handleDataFileUpload(file);
+});
+
+dataFileInput.addEventListener('change', () => {
+  const fileName = dataFileInput.value.split('\\').pop();
+  dataFileNameText.innerText = fileName;
+  const file = dataFileInput.files[0];
+  handleDataFileUpload(file);
+});
+
+document.getElementById('data-file-upload').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  const fileName = file.name;
+  dataFileNameText.innerText = fileName;
+  handleDataFileUpload(file);
+});
+
+dataForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/upload_time_slots');
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      window.location.href = '/admin/dashboard';
+    }
+  };
+  xhr.send(dataFormData);
+});
+
+function handleDataFileUpload(file) {
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = () => {
+    const fileContent = reader.result;
+    const fileInput = document.createElement('input');
+    fileInput.setAttribute('type', 'hidden');
+    fileInput.setAttribute('name', 'dataFileContent');
+    fileInput.setAttribute('value', fileContent);
+    dataForm.appendChild(fileInput);
+
+    for (const key of dataFormData.keys()) {
+        if (key !== 'dataFileContent') {
+            dataFormData.delete(key);
+        }
+    }
+    dataFormData.append('dataFile', file);
+
+    // Update the text in the dropzone element
+    const fileName = file.name;
+    dataFileNameText.innerText = fileName;
+  };
+}
+
+</script>
+
+{% endblock %}

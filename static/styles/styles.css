@@ -11327,6 +11327,9 @@ textarea.form-control-lg {
   transition: margin 0.25s ease-out;
 }
 
+  .pgcontentrap {
+
+  }
 #sidebar-wrapper {
   font-size: 1.2rem;
   height: 79px;
@@ -11344,6 +11347,8 @@ textarea.form-control-lg {
 
 #page-content-wrapper {
   min-width: 100vw;
+  margin-left: -1px;
+  border-left: 1px solid #dee2e6;
 }
 
 body.sb-sidenav-toggled #wrapper #sidebar-wrapper {

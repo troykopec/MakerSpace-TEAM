@@ -9,22 +9,18 @@ import sys
 import pytz
 sys.path.append('MakerSpace/Google_API')
 from Google_API import quickstart
+from Google_API import create
 import json
-
-
-
 from time import *
 import calendar
-
-
 import os.path
-
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-
+import pandas as pd
+import re
 
 
 #############################
@@ -38,6 +34,22 @@ app.app_context().push()
 #############################
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Maker_Space_Password687737!@localhost/our_users'
 app.config['SECRET_KEY'] = "my secret key"
+
+# Upload folder
+UPLOAD_FOLDER = 'static/user_add_csvs'
+app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
+ALLOWED_EXTENSIONS = set(['csv'])
+MACHINE_TYPES = ["3D-Printer", "Circuit Board Creator", "Injection Mold", "Vinyl Cutter", "Heat Press", "Laser Machine", "Oscilloscope"]
+MACHINE_TYPESS = ["3D-Printer", "Circuit Board Creator"]
+MACHINES_LISTED = {
+    1: "3D-Printer",
+    2: "Circuit Board Creator",
+    3: "Injection Mold",
+    4: "Vinyl Cutter",
+    5: "Heat Press",
+    6: "Laser Machine",
+    7: "Oscilloscope"
+}
 
 #############################
 #| Initialize the Database |#
@@ -61,6 +73,82 @@ def load_user(user_id):
 ########################################################################    
 #############################| WEBPAGES |###############################
 ########################################################################
+
+# Used in uploadFiles(); checks if file is csv
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Get the uploaded user upload files
+@app.route("/upload_users", methods=['POST'])
+@login_required
+def upload_users():
+    print(request.files['file'])
+    if current_user.role == "Admin":
+        uploaded_file = request.files['file']
+        if uploaded_file and allowed_file(uploaded_file.filename):
+            timenow = re.sub(r'[:.]', '_', str(datetime.now()))
+            new_filename = f'{uploaded_file.filename.split(".")[0]}_{timenow}.csv'
+            # set the file path
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
+            # save the file
+            uploaded_file.save(file_path)
+            csv_to_db(file_path)
+            message = "User(s) Added Successfully!"
+            return jsonify(message=message)
+    return jsonify(error="Upload Failed")
+
+# Iterates through each row, adding each user to DB
+def csv_to_db(filePath):
+      # CVS Column Names
+      col_names = ['name','email', 'password_hash' , 'username', 'role']
+      # Use Pandas to parse the CSV file
+      csvData = pd.read_csv(filePath,names=col_names, header=None)
+      # Loop through the Rows
+      for i,row in csvData.iterrows():
+          hashed_pw = generate_password_hash(row['password_hash'], "sha256")
+          user = Users(name=row['name'], email=row['email'], username=row['username'],
+                         role=row['role'], password_hash=hashed_pw)
+          db.session.add(user)
+          db.session.commit()
+      flash("User(s) Added Successfully!")
+      
+#--------------------------------------------------------------------------------------
+# Get the uploaded user upload files
+@app.route("/upload_time_slots", methods=['POST'])
+@login_required
+def upload_time_slots():
+    print("hi")
+    print(request.files['dataFile'])
+    if current_user.role == "Admin":
+        uploaded_file = request.files['dataFile']
+        if uploaded_file and allowed_file(uploaded_file.filename):
+            timenow = re.sub(r'[:.]', '_', str(datetime.now()))
+            new_filename = f'{uploaded_file.filename.split(".")[0]}_{timenow}.csv'
+            # set the file path
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
+            # save the file
+            uploaded_file.save(file_path)
+            csv_to_api(file_path)
+            message = "User(s) Added Successfully!"
+            return jsonify(message=message)
+    return jsonify(error="Upload Failed")
+
+# Iterates through each row, adding each user to DB
+def csv_to_api(filePath):
+      # CVS Column Names
+      col_names = ['year', 'month' , 'day', 'start_hour', 'end_hour']
+      # Use Pandas to parse the CSV file
+      csvData = pd.read_csv(filePath,names=col_names, header=None)
+      # Loop through the Rows
+      for machine in MACHINE_TYPES:
+          for i,row in csvData.iterrows():
+              machine_name = machine
+              start_date = f"{row['year']}-{row['month']}-{row['day']}T{row['start_hour']}:00-04:00"
+              end_date = f"{row['year']}-{row['month']}-{row['day']}T{row['end_hour']}:00-04:00"
+              create.getDates(machine_name, start_date, end_date)
+      flash("Time Slot(s) Created Successfully!")
+
 
 @app.template_filter('tojson')
 def tojson(value):
@@ -94,7 +182,7 @@ def add_user():
             hashed_pw = generate_password_hash(form.password_hash.data, "sha256")
             
             user = Users(name=form.name.data, email=form.email.data, username = form.username.data,
-                         favorite_color=form.favorite_color.data, password_hash=hashed_pw)
+                         role=form.role.data, password_hash=hashed_pw)
             db.session.add(user)
             db.session.commit()
             flash("User Added Successfully!")
@@ -108,7 +196,7 @@ def add_user():
         form.name.data = ''
         form.username.data = ''
         form.email.data = ''
-        form.favorite_color.data = ''
+        form.role.data = ''
         form.password_hash = ''
     our_users = Users.query.order_by(Users.date_added)
     return render_template("simple-sidebar/dist/add_user.html",
@@ -116,6 +204,17 @@ def add_user():
         name=name,
         our_users=our_users)
 
+
+@app.route('/admin/dashboard', methods=['GET', 'POST'])
+@login_required
+def admin_dashboard():
+    flash_message = session.pop('flash_message', None)
+    if(current_user.role == "Admin"):
+        return render_template("simple-sidebar/dist/admin_dashboard.html",
+                            get_user_reservations = get_user_reservations,
+                            datetime = datetime)
+    else:
+        return redirect(url_for('dashboard'))
 
 ##################| User Function for adding reservation |#################
 # The function retrieves the necessary data from the request, checks if   #
@@ -134,13 +233,15 @@ def add_reservation():
     event_date_end = data['event_date_end']
     machine_id = data['machine_id']
     current_user = data['current_user']
+    event_id = data['event_id']
+    print(event_id)
     reservations = Reservations.query.filter_by(selected_date_start=event_date_start).with_entities(Reservations.machineid).all()
     machineid_list = [tup[0] for tup in reservations]
     
     if machine_id in machineid_list:
         flash("This time slot is taken!")
     else:
-        reservation = Reservations(userid=current_user, machineid=machine_id, selected_date_start=event_date_start, selected_date_end=event_date_end)
+        reservation = Reservations(userid=current_user, machineid=machine_id, selected_date_start=event_date_start, selected_date_end=event_date_end, eventid=event_id)
         db.session.add(reservation)
         db.session.commit()
         
@@ -163,7 +264,10 @@ def add_reservation():
 def get_user_reservations(id):
     if (id == current_user.id):
         try:
-            reservations = Reservations.query.filter_by(userid=id).all()
+            if ("Admin" == current_user.role):
+                reservations = Reservations.query.all()
+            else:
+                reservations = Reservations.query.filter_by(userid=id).all()
             for reservation in reservations:
                 dt_start = datetime.strptime(reservation.selected_date_start[:-1], '%Y-%m-%dT%H:%M:%S.%f')
                 utc_start = pytz.timezone('UTC').localize(dt_start)
@@ -208,7 +312,8 @@ def get_all_reservations():
                 'id': reservation.id,
                 'userid': reservation.userid,
                 'machineid': reservation.machineid,
-                'selected_date': formatted_date
+                'selected_date': formatted_date,
+                'eventid' : reservation.eventid
             }
             reservations_list.append(reservation_dict)
         return jsonify(reservations_list)
@@ -232,10 +337,7 @@ def get_all_reservations():
 def cancelReservation():
     reservation_id = request.form['reservation_id']
     user_id = int(request.form['user_id']) 
-    print(reservation_id)
-    print(user_id)
-    print(current_user.id)
-    if (user_id == current_user.id):
+    if (user_id == current_user.id or "Admin" == current_user.role):
         reservation_to_delete = Reservations.query.get_or_404(reservation_id)
         try:
             db.session.delete(reservation_to_delete)
@@ -248,6 +350,22 @@ def cancelReservation():
     return ''
     
 
+
+
+@app.route('/delete_API_reservation', methods=['POST'])
+@login_required
+def delete_API_reservation():
+    if (current_user.role == "Admin"):
+        data = json.loads(request.data)
+        event_id = data['event_id']
+        quickstart.deleteDate(event_id)
+        reservation = Reservations.query.filter_by(eventid=event_id).first()
+        reservation_id = reservation.id
+        reservation_to_delete = Reservations.query.get_or_404(reservation_id)
+        db.session.delete(reservation_to_delete)
+        db.session.commit()
+    else:
+        return ''
 ######################## | Calender Page | #############################
 # This function is responsible for rendering the HTML template for the #
 # calendar page, which displays a monthly calendar with available      #
@@ -280,18 +398,8 @@ def schedule():
 @app.route('/load_modal')
 def load_modal():
     machine_id = request.args.get('event_id')
-    
-    machines = {
-    1: "3D-Printer",
-    2: "Circuit Board Creator",
-    3: "Injection Mold",
-    4: "Vinyl Cutter",
-    5: "Heat Press",
-    6: "Laser Machine",
-    7: "Oscilloscope"
-    }
-    if int(machine_id) in machines:
-        machine_name = machines.get(int(machine_id))
+    if int(machine_id) in MACHINES_LISTED:
+        machine_name = MACHINES_LISTED.get(int(machine_id))
     else:
         return
     # Code to generate the event content goes here
@@ -305,8 +413,7 @@ def load_modal():
 @login_required
 def status():
     status = []
-    machine_types = ["3D-Printer", "Circuit Board Creator", "Injection Mold", "Vinyl Cutter", "Heat Press", "Laser Machine", "Oscilloscope"]
-    for machine in machine_types:
+    for machine in MACHINE_TYPES:
         reservations = Reservations.query.filter_by(machineid=machine).all()
         reservations_list = []
         if not reservations:
@@ -324,7 +431,7 @@ def status():
                 print("Open")
                 status.append("Open")
 
-    return render_template("simple-sidebar/dist/status.html", status = status, machine_types = machine_types)
+    return render_template("simple-sidebar/dist/status.html", status = status, machine_types = MACHINE_TYPES)
 
 #############################| Training Page |############################
 @app.route('/scheduled_reservations', methods=['GET', 'POST'])
@@ -459,7 +566,7 @@ def update(id):
     if request.method == "POST":
         name_to_update.name = request.form['name']
         name_to_update.email = request.form['email']
-        name_to_update.favorite_color = request.form['favorite_color']
+        name_to_update.role = request.form['role']
         name_to_update.username = request.form['username']
         try:
             db.session.commit()
@@ -493,7 +600,7 @@ class Users(db.Model, UserMixin):
     username = db.Column(db.String(20), nullable=False, unique=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(150), nullable=False, unique=True)
-    favorite_color = db.Column(db.String(150))
+    role = db.Column(db.String(150), nullable=False)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     
     #Password Stuff
@@ -518,6 +625,7 @@ class Reservations(db.Model):
     machineid = db.Column(db.String(255))
     selected_date_start = db.Column(db.String(255))
     selected_date_end = db.Column(db.String(255))
+    eventid = db.Column(db.String(255))
 
 ########################################################################    
 ################################| RUN |#################################

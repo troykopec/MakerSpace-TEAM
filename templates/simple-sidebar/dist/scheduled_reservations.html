@@ -72,7 +72,7 @@
       <td>
         <form action="/cancel_reservation" method="POST">
           <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
-          <input type="hidden" name="user_id" value="{{ current_user.id }}">
+          <input type="hidden" name="user_id" value="{{ reservation.userid }}">
           <button type="submit">Cancel</button>
         </form>
       </td>

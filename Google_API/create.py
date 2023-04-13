@@ -16,7 +16,7 @@ from googleapiclient.errors import HttpError
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 
-def getDates():
+def getDates(machine_name, start_date, end_date):
     """Shows basic usage of the Google Calendar API.
     Prints the start and name of the next 10 events on the user's calendar.
     """
@@ -42,17 +42,17 @@ def getDates():
         service = build('calendar', 'v3', credentials=creds)
 
         event = {
-            'summary': 'Circuit Board Creator',
+            'summary': machine_name,
             'start': {
-                'dateTime': '2023-03-27T12:00:00-04:00',
+                'dateTime': start_date,
                 'timeZone': 'America/Los_Angeles',
             },
             'end': {
-                'dateTime': '2023-03-27T14:00:00-04:00',
+                'dateTime': end_date,
                 'timeZone': 'America/Los_Angeles',
             },
             'recurrence': [
-                'RRULE:FREQ=DAILY;COUNT=31'
+                'RRULE:FREQ=DAILY;COUNT=1'
             ],
             'reminders': {
                 'useDefault': False,
@@ -70,5 +70,4 @@ def getDates():
     except HttpError as error:
         print('An error occurred: %s' % error)
 
-getDates()
 
