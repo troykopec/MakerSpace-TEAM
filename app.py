@@ -1,12 +1,28 @@
 from flask import *
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from webforms import LoginForm, UserForm, PasswordForm
 from flask import render_template, request
 from twilio.rest import Client
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from flask import flash
+from flask import Flask, render_template, flash, request, redirect, url_for
+from datetime import datetime 
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from werkzeug.security import generate_password_hash, check_password_hash 
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
+from webforms import PostForm
+import uuid as uuid
+from flask import Flask, render_template
+from flask_ckeditor import CKEditor
+from flask import Flask, render_template, flash, request, redirect, url_for
+
+
+
 
 
 #############################
@@ -14,6 +30,9 @@ from twilio.rest import Client
 #############################
 app = Flask(__name__)
 app.app_context().push()
+
+# Add CKEditor
+ckeditor = CKEditor(app)
 
 #############################
 ####| Add MySQL Database |###
@@ -142,6 +161,105 @@ def index():
     return render_template("simple-sidebar/dist/base.html")
 
 
+##############################| Blog Post Model|#############################
+class Posts(db.Model ):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255))
+    content = db.Column(db.Text)
+    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+    location = db.Column(db.String(255))
+
+
+@app.route('/posts/delete/<int:id>')
+@login_required
+def delete_post(id):
+    post_to_delete = Posts.query.get_or_404(id)
+    #id = current_user.id
+    #if id == post_to_delete.poster.id:
+        
+    try:
+            db.session.delete(post_to_delete)
+            db.session.commit()
+
+            # Return a message
+            flash("Blog Post Was Deleted!")
+            # Grab all the posts from the databas
+            posts = Posts.query.order_by(Posts.date_posted)
+            return render_template("simple-sidebar/dist/posts.html", posts=posts)
+
+    except:
+            flash("Whoops! There was a problem deleting post, try again!")
+            # Grab all the posts from the databas
+            posts = Posts.query.order_by(Posts.date_posted)
+            return render_template("simple-sidebar/dist/posts.html", posts=posts)
+    #else:
+         # Return a message
+           # flash("You Aren't Authorized To Delete That Post!")
+            # Grab all the posts from the databas
+            #posts = Posts.query.order_by(Posts.date_posted)
+           # return render_template("simple-sidebar/dist/posts.html", posts=posts)
+
+
+@app.route('/posts')
+def posts():
+	# Grab all the posts from the database
+
+	#posts = Posts.query.filter_by(location="page1").order_by(Posts.date_posted) (TROY CODE)
+    posts = Posts.query.order_by(Posts.date_posted)
+    return render_template("simple-sidebar/dist/posts.html", posts=posts)
+
+@app.route('/posts/<int:id>')
+def post(id):
+    post = Posts.query.get_or_404(id)
+    return render_template("simple-sidebar/dist/post.html", post=post)
+
+@app.route('/posts/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_post(id):
+	post = Posts.query.get_or_404(id)
+	form = PostForm()
+	if form.validate_on_submit():
+		post.title = form.title.data
+		#post.author = form.author.data
+		#post.slug = form.slug.data
+		post.content = form.content.data
+                
+		# Update Database
+		db.session.add(post)
+		db.session.commit()
+		flash("Post Has Been Updated!")
+		return redirect(url_for('post', id=post.id))
+	
+	form.title.data = post.title
+	#form.author.data = post.author
+	#form.slug.data = post.slug
+	form.content.data = post.content
+	return render_template('simple-sidebar/dist/edit_post.html', form=form)
+
+# Add Post Page
+@app.route('/add_post', methods=['GET', 'POST'])
+@login_required
+def add_post():
+	form = PostForm()
+
+	if form.validate_on_submit():
+		post = Posts(title=form.title.data, content=(form.content.data).replace("</p>", "").replace("<p>", ""), location=form.location.data)
+		# Clear The Form
+		form.title.data = ''
+		form.content.data = ''
+
+		# Add post data to database
+		db.session.add(post)
+		db.session.commit()
+
+		# Return a Message
+		flash("Blog Post Submitted Successfully!")
+
+	# Redirect to the webpage
+	return render_template("simple-sidebar/dist/add_post.html", form=form)
+
+        
+     
 
 ##########################| Function for Emergency Button Feature |#########################
 @app.route("/contact", methods = ['GET', 'POST'])
