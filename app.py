@@ -22,6 +22,7 @@ from googleapiclient.errors import HttpError
 import pandas as pd
 import re
 from flask_ckeditor import CKEditor
+from twilio.rest import Client
 
 
 #############################
@@ -790,6 +791,22 @@ def add_post():
 
     # Redirect to the webpage
     return render_template("simple-sidebar/dist/add_post.html", form=form)
+
+
+@app.route("/contact", methods = ['GET', 'POST'])
+def contact():
+    # Your Account SID from twilio.com/console
+    account_sid = ""
+    # Your Auth Token from twilio.com/console
+    auth_token  = ""
+    client = Client(account_sid, auth_token)
+    message = client.messages.create(
+    #12032400741 Dr.Lori Number
+    to="+18134408766", 
+    from_="+18884955046",
+    body="There is a serious problem in the Makerspace!")
+    print(message.sid)
+    return render_template("simple-sidebar/dist/base.html")
 
 
 ########################################################################    
