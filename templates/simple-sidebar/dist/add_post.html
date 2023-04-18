@@ -2,7 +2,7 @@
 {% block content %}
 
 
-
+<br/>
 
 {% for message in get_flashed_messages() %}
 	<div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -13,7 +13,7 @@
 
 {% if current_user.is_authenticated %}
 
-<h1>Add Blog Post</h1>
+<h1>Create Help Request</h1>
 	<br/>
 <div class="shadow p-3 mb-5 bg-body rounded">
 	<form method="POST">
@@ -26,14 +26,15 @@
 
 		
 		{{ form.content.label(class="form-label") }}
-		
-		{{ form.content(class="form-control") }}
-		
+
+	
+		{{ form.content(class="form-control")|safe }}
 		<br/>
 
-		{{ form.location.label(class="form-label") }}
-
-		{{ form.location(class="form-control") }}
+		{% if current_user.role == "Admin" %}
+			{{ form.location.label(class="form-label") }}
+			{{ form.location(class="form-control") }}
+		{% endif %}
 		<br/>
 		
 		{{ form.submit(class="btn btn-secondary") }}

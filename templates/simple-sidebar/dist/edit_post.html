@@ -1,7 +1,7 @@
 {% extends 'simple-sidebar/dist/base.html' %} 
 
 {% block content %}
-
+<br/>
 {% for message in get_flashed_messages() %}
 	<div class="alert alert-warning alert-dismissible fade show" role="alert">
 	  {{ message }}
@@ -9,7 +9,7 @@
 	</div>
 {% endfor %}
 
-<h1>Blog Posts</h1>
+<h1>Edit Help Request</h1>
 <br/>
 
 
@@ -40,7 +40,7 @@
 </form>
 
 </div>
-<br>
+
 <a href="{{ url_for('posts')}}" class="btn btn-outline-secondary btn-sm">Back To Blog</a>
 <br/>
 

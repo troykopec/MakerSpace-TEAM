@@ -1,145 +1,291 @@
+
 {% extends 'simple-sidebar/dist/base.html' %}
 {% block content %}
+
+
 <style>
-  div.scrollmenu {
-    background-color: #333;
-    overflow: auto;
-    white-space: nowrap;
-  }
+        .leftside {
+        display: block;
+        width: 65%;
+        float: left;
+      }
 
-  div.scrollmenu a {
-    display: inline-block;
-    color: white;
-    text-align: center;
-    padding: 14px;
-    text-decoration: none;
-  }
+      .rightside {
+        display: block;
+        width: 30%;
+        float: right;
+      }
 
-  div.scrollmenu a:hover {
-    background-color: #777;
-  }
-  </style>
+      #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        display: none;
+      }
+
+      .spinner {
+        position: absolute;
+        top: 50%;
+        left: calc(50% - 20px);
+        width: 40px;
+        height: 40px;
+        background-color: #ffffff;
+
+        border-radius: 100%;
+        -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
+        animation: sk-scaleout 1.0s infinite ease-in-out;
+      }
+
+      @-webkit-keyframes sk-scaleout {
+        0% { -webkit-transform: scale(0) }
+        100% {
+          -webkit-transform: scale(2.0);
+          opacity: 0;
+        }
+      }
+
+      @keyframes sk-scaleout {
+        0% {
+          -webkit-transform: scale(0);
+          transform: scale(0);
+        } 100% {
+          -webkit-transform: scale(2.0);
+          transform: scale(2.0);
+          opacity: 0;
+        }
+      }
+</style>
+
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/modal.css') }}">
+
 <br/>
 <h1>Reserve A Machine</h1>
 <br/>
-<!-- 3D-Printer -->
 
-<div class="card">
-  <div class="card-header">
-    <h4>3D-Printer</h4>
-  </div>
-  <div class="card-body">
-    <!-- Large modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">Reserve</button>
-
-    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">3D-Printer</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="scrollmenu">
-              <a href="#home">Home</a>
-              <a href="#news">News</a>
-              <a href="#contact">Contact</a>
-              <a href="#about">About</a>
-              <a href="#support">Support</a>
-              <a href="#blog">Blog</a>
-              <a href="#tools">Tools</a>
-              <a href="#base">Base</a>
-              <a href="#custom">Custom</a>
-              <a href="#more">More</a>
-              <a href="#logo">Logo</a>
-              <a href="#friends">Friends</a>
-              <a href="#partners">Partners</a>
-              <a href="#people">People</a>
-              <a href="#work">Work</a>
-            </div>
+<div id="overlay">
+  <div class="spinner"></div>
 </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+
+<!-- 3D-Printer -->
+<div class="leftside">
+
+    <div class="card w-100">
+    <div class="card-body">
+      <h5 class="card-title">3D Printer</h5>
+      <p class="card-text">Do you need to 3D print a model for a project? Look no further.</p>
+      <a href="#" class="btn btn-primary load-button" data-event-id="1">Reserve</a>
+    </div>
+    <div id="content"></div>
+  </div>
+  <br/>
+  
+
+  <!-- Circuit Board Creator -->
+
+  <div class="card w-100">
+    <div class="card-body">
+      <h5 class="card-title">Circuit Board Creator</h5>
+      <p class="card-text">Feel free to use the CNC Milling machine to create your needed circuit boards.</p>
+      <a href="#" class="btn btn-primary load-button" data-event-id="2">Reserve</a>
+    </div>
+    <div id="content"></div>
+  </div>
+  <br/>
+
+  <!-- Injection Mold -->
+
+  <div class="card w-100">
+    <div class="card-body">
+      <h5 class="card-title">Injection Mold</h5>
+      <p class="card-text">Feel like making a mold? This machine is perfect for you.</p>
+      <a href="#" class="btn btn-primary load-button" data-event-id="3">Reserve</a>
+    </div>
+    <div id="content"></div>
+  </div>
+  <br/>
+
+  <!-- Vinyl Cutter -->
+
+  <div class="card w-100">
+    <div class="card-body">
+      <h5 class="card-title">Vinyl Cutter</h5>
+      <p class="card-text">This cuts vinyl... duh</p>
+      <a href="#" class="btn btn-primary load-button" data-event-id="4">Reserve</a>
+    </div>
+    <div id="content"></div>
+  </div>
+  <br/>
+
+  <!-- Heat Press -->
+
+  <div class="card w-100">
+    <div class="card-body">
+      <h5 class="card-title">Heat Press</h5>
+      <p class="card-text">This machine is used for mapping a print onto a shirt.</p>
+      <a href="#" class="btn btn-primary load-button" data-event-id="5">Reserve</a>
+    </div>
+    <div id="content"></div>
+  </div>
+  <br/>
+
+  <!-- Laser Machine -->
+
+  <div class="card w-100">
+    <div class="card-body">
+      <h5 class="card-title">Laser Machine</h5>
+      <p class="card-text">Feel like blinding your friend? This is perfect for you.</p>
+      <a href="#" class="btn btn-primary load-button" data-event-id="6">Reserve</a>
+    </div>
+    <div id="content"></div>
+  </div>
+  <br/>
+
+  <!-- Oscilloscope -->
+
+  <div class="card w-100">
+    <div class="card-body">
+      <h5 class="card-title">Oscilloscope</h5>
+      <p class="card-text">Man idk what this does</p>
+      <a href="#" class="btn btn-primary load-button" data-event-id="7">Reserve</a>
+    </div>
+  </div>
+  <div id="content"></div>
+<br/>
+</div>
+
+<div class="rightside">
+  <div class="card w-100">
+    <div class="card-body">
+      <h5 class="card-title">Inventory of Items</h5>
+      <p class="card-text">Screwdrivers x2</p>
+      <p class="card-text">Gorilla Glue x8</p>
+      <p class="card-text">Protective Glasses x10</p>
+      <p class="card-text">Exacto Blades x4</p>
+      <p class="card-text">Tape Measures x4</p>
+      <p class="card-text">Clamps x5</p>
+      <p class="card-text">3D Printing Wire Colors x8</p>
+      <p class="card-text">Breadboard x2</p>
+      <p class="card-text">Wire Kits x4</p>
+      <p class="card-text">Hot Glue Gun x1</p>
+      <p class="card-text">Hammers x2</p>
+      <p class="card-text">Computers x4</p>
+      <button type="button" class="btn btn-danger position-relative" onclick="toggleCheckboxes()">
+        Report Low Inventory <span class="position-absolute top-0 start-100 translate-middle badge border border-light rounded-circle bg-danger p-2"><span class="visually-hidden">unread messages</span></span>
+      </button>
+        <div id="checkboxContainer" style="display: none; margin-top: 10px;">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="checkbox1">
+            <label class="form-check-label" for="checkbox1">
+              Gorilla Glue
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="checkbox1">
+            <label class="form-check-label" for="checkbox1">
+              3D Printing Colors
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="checkbox1">
+            <label class="form-check-label" for="checkbox1">
+              Breadboard
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="checkbox1">
+            <label class="form-check-label" for="checkbox1">
+              Wire Kits
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="checkbox1">
+            <label class="form-check-label" for="checkbox1">
+              Hot Glue Gun
+            </label>
+          </div>
+          <button type="button" class="btn btn-success mt-2" id="submitBtn" disabled>Submit</button>
+        </div>
+        <div id="alertModal" class="modal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Thank you for notifying us, we will restock shortly.</h5>
+                <button type="button" class="btn-close" onclick="closeAlertModal()"></button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 </div>
-<br/>
-
-<!-- Circuit Board Creator -->
-
-<div class="card">
-  <div class="card-header">
-    <h4>Circuit Board Creator</h4>
-  </div>
-  <div class="card-body">
-    <a href="#" class="btn btn-primary">Reserve</a>
-  </div>
 </div>
-<br/>
 
-<!-- Injection Mold -->
+{% block extra_js %}
+<script>
+  function toggleCheckboxes() {
+    const checkboxContainer = document.getElementById('checkboxContainer');
+    const submitBtn = document.getElementById('submitBtn');
+    const isHidden = checkboxContainer.style.display === 'none';
+    checkboxContainer.style.display = isHidden ? 'block' : 'none';
+    submitBtn.disabled = !isHidden;
+  }
 
-<div class="card">
-  <div class="card-header">
-    <h4>Injection Mold</h4>
-  </div>
-  <div class="card-body">
-    <a href="#" class="btn btn-primary">Reserve</a>
-  </div>
-</div>
-<br/>
+  function showThankYouAlert() {
+    alert("Thank you for notifying us, we will restock shortly");
+  }
+  document.getElementById('submitBtn').addEventListener('click', showThankYouAlert);
 
-<!-- Vinyl Cutter -->
+  function showThankYouAlert() {
+    document.getElementById('alertModal').style.display = 'block';
+  }
 
-<div class="card">
-  <div class="card-header">
-    <h4>Vinyl Cutter</h4>
-  </div>
-  <div class="card-body">
-    <a href="#" class="btn btn-primary">Reserve</a>
-  </div>
-</div>
-<br/>
+  function closeAlertModal() {
+    document.getElementById('alertModal').style.display = 'none';
+  }
 
-<!-- Heat Press -->
+  document.getElementById('submitBtn').addEventListener('click', showThankYouAlert);
 
-<div class="card">
-  <div class="card-header">
-    <h4>Heat Press</h4>
-  </div>
-  <div class="card-body">
-    <a href="#" class="btn btn-primary">Reserve</a>
-  </div>
-</div>
-<br/>
+</script>
+<style>#page-content-wrapper {
+  height: 1390px;
+}</style>
+{% endblock %}
 
-<!-- Laser Machine -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<div class="card">
-  <div class="card-header">
-    <h4>Laser Machine</h4>
-  </div>
-  <div class="card-body">
-    <a href="#" class="btn btn-primary">Reserve</a>
-  </div>
-</div>
-<br/>
 
-<!-- Oscilloscope -->
+<script>
+$(document).ready(function() {
+  $(".load-button").click(function() {
+    var event_id = $(this).data("event-id"); // Set the event ID here
+    
+    $("#overlay").show();
+    
+    $.ajax({
+      url: "/load_modal?event_id=" + event_id,
+      type: "GET",
+      success: function(response) {
+        $("#content").html(response);
+        $("#overlay").hide();
+        $("#test").modal('show'); // Show the Bootstrap modal
+      },
+      error: function(xhr) {
+        alert("Error loading content.");
+        $("#overlay").hide();
+      }
+    });
+  });
 
-<div class="card">
-  <div class="card-header">
-    <h4>Oscilloscope</h4>
-  </div>
-  <div class="card-body">
-    <a href="#" class="btn btn-primary">Reserve</a>
-  </div>
-</div>
-<br/>
+  $(document).on("hidden.bs.modal", ".modal", function () {
+    $("#content").empty();
+    location.reload();
+  });
+});
+</script>
+
 {% endblock %}

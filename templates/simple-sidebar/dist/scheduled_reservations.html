@@ -1,10 +1,8 @@
-
-
-
 {% extends 'simple-sidebar/dist/base.html' %} 
 {% block content %}
 
 
+<br/>
 
 <style>
   table {
@@ -29,11 +27,34 @@
     color: #fff;
     border: none;
   }
+
+  .parent-container {
+  margin-top: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* additional styles for the parent container */
+}
+
+  .no-reservations {
+    opacity: 0.4;
+    color: #000000;
+  /* additional styles for the h1 element */
+  }
 </style>
 
-<h1 class="display-5">Reservations</h1>
+{% for message in get_flashed_messages() %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endfor %}  
 
-<table>
+{% set reservations = get_user_reservations(current_user.id) %}
+
+<h1>Reservations</h1>
+
+<table class="table table-striped table-hover">
   <thead>
     <tr>
       <th>Machines</th>
@@ -43,37 +64,29 @@
     </tr>
   </thead>
   <tbody>
+    {% for reservation in reservations: %}
     <tr>
-      <td>3D-Printer</td>
-      <td>2023-03-16</td>
-      <td>12:00 PM</td>
-      <td><button>Cancel</button></td>
+      <td>{{ reservation.machineid }}</td>
+      <td>{{ datetime.strptime((reservation.selected_date_start),"%Y-%m-%d %I:%M %p").strftime('%Y-%m-%d') }}</td>
+      <td>{{ datetime.strptime(reservation.selected_date_start, "%Y-%m-%d %I:%M %p").strftime('%I:%M %p').replace(" AM", "").replace(" PM", "") }} - {{ datetime.strptime(reservation.selected_date_end, "%Y-%m-%d %I:%M %p").strftime('%I:%M %p') }}</td></td>
+      <td>
+        <form action="/cancel_reservation" method="POST">
+          <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
+          <input type="hidden" name="user_id" value="{{ reservation.userid }}">
+          <button type="submit">Cancel</button>
+        </form>
+      </td>
     </tr>
-    <tr>
-      <td>Circuit Board Creator</td>
-      <td>2023-03-17</td>
-      <td>3:00 PM</td>
-      <td><button>Cancel</button></td>
-    </tr>
-    <tr>
-      <td>Injection Mold</td>
-      <td>2023-03-18</td>
-      <td>5:00 PM</td>
-      <td><button>Cancel</button></td>
-    </tr>
-    <tr>
-      <td>Vinyl Cutter</td>
-      <td>2023-03-19</td>
-      <td>5:30 PM</td>
-      <td><button>Cancel</button></td>
-    </tr>
-    <tr>
-      <td>Heat Press</td>
-      <td>2023-03-20</td>
-      <td>6:00 PM</td>
-      <td><button>Cancel</button></td>
-    </tr>
+  {% endfor %}
   </tbody>
 </table>
+
+
+{% if not reservations %}
+<div class="parent-container">
+<h2 class = "no-reservations">No Scheduled Reservations</h2>
+</div>
+{% endif %}
+
 
 {% endblock %}

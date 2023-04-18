@@ -9,13 +9,12 @@
         </tr>
     </thead>
     <tbody>
+        {% for i in range(machine_types|length) %}
         <tr>
-            <td><h5>3D-Printer</h5></td> <td><h5><span class="badge bg-success">Open</span></h5></td>
+          <td><h5>{{ machine_types[i] }}</h5></td>
+          <td><h5><span class="badge bg-{{ 'success' if status[i] == 'Open' else 'danger' }}">{{ status[i] }}</span></h5></td>
         </tr>
-            
-        <tr>
-            <td><h5>Circuit Board Creator</h5></td> <td><h5><span class="badge bg-success">Open</span></h5></td>
-        </tr>
+      {% endfor %}
     </tbody>
 </table>
 

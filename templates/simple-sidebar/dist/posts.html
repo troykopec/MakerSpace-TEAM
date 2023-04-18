@@ -1,6 +1,22 @@
 {% extends 'simple-sidebar/dist/base.html' %} 
 
 {% block content %}
+<style>
+    .parent-container {
+  margin-top: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* additional styles for the parent container */
+}
+
+  .no-reservations {
+    opacity: 0.4;
+    color: #000000;
+  /* additional styles for the h1 element */
+  }
+</style>
+
 
 {% for message in get_flashed_messages() %}
 	<div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -8,8 +24,8 @@
 	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 	</div>
 {% endfor %}
-
-<h1>Blog Posts</h1>
+<br/>
+<h1>Help Requests</h1>
 <br/>
 
 {% for post in posts %}
@@ -22,16 +38,22 @@
     <br/><br/>
   
     <a href="{{url_for('post', id=post.id)}}" class ="btn btn-outline-secondary">View Post</a>
-
-    <a href="{{url_for('edit_post', id=post.id)}}" class ="btn btn-outline-secondary">Edit Post</a>
-
-    <a href="{{url_for('delete_post', id=post.id)}}" class ="btn btn-outline-danger">Delete Post</a>
-
+    
+    {% if current_user.id == post.post_userid or current_user.role == "Admin" %}
+      <a href="{{url_for('edit_post', id=post.id)}}" class ="btn btn-outline-secondary">Edit Post</a>
+      <a href="{{url_for('delete_post', id=post.id)}}" class ="btn btn-outline-danger">Delete Post</a>
+    {% endif %}
 
     <hr><br/>
 
 </div>
 <br/>
+{% else %}
+
+
+<div class="parent-container">
+<h2 class = "no-reservations">No Posts Here Yet...</h2>
+</div>
 {% endfor %} 
 
 
