@@ -168,7 +168,7 @@ class Posts(db.Model ):
     content = db.Column(db.Text)
     date_posted = db.Column(db.DateTime, default=datetime.utcnow)
     location = db.Column(db.String(255))
-
+    
 
 @app.route('/posts/delete/<int:id>')
 @login_required
@@ -240,6 +240,7 @@ def edit_post(id):
 @app.route('/add_post', methods=['GET', 'POST'])
 @login_required
 def add_post():
+    
 	form = PostForm()
 
 	if form.validate_on_submit():
