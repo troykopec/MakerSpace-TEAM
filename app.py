@@ -497,7 +497,6 @@ def status():
             reservations = Reservations.query.filter_by(machineid=machine).all()
             reservations_list = []
             if not reservations:
-                print("Open")
                 status.append("Open")
             for reservation in reservations:
                 current_time = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
@@ -505,10 +504,8 @@ def status():
                 end_time = reservation.selected_date_end
                 if start_time <= current_time <= end_time:
                     print(start_time + " " + current_time + " " + end_time)
-                    print("Closed")
                     status.append("Closed")
                 else:
-                    print("Open")
                     status.append("Open")
 
     return render_template("simple-sidebar/dist/status.html", status = status, machine_types = MACHINE_TYPES)
@@ -818,7 +815,7 @@ def contact():
     # Your Account SID from twilio.com/console
     account_sid = "ACbc855018324a2b88daa90916999cef56"
     # Your Auth Token from twilio.com/console
-    auth_token  = "41e5f0936cd4f1a1edf7ba71ae2437e1"
+    auth_token  = "cfb1f8e899bf804a87fa98c22451b0e0"
     client = Client(account_sid, auth_token)
     message = client.messages.create(
     #12032400741 Dr.Lori Number
