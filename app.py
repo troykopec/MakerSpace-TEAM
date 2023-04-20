@@ -39,12 +39,11 @@ ckeditor = CKEditor(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Maker_Space_Password687737!@localhost/our_users'
 app.config['SECRET_KEY'] = "my secret key"
 
-# Upload folder
+# set constants
 UPLOAD_FOLDER = 'static/user_add_csvs'
 app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = set(['csv'])
 MACHINE_TYPES = ["3D-Printer", "Circuit Board Creator", "Injection Mold", "Vinyl Cutter", "Heat Press", "Laser Machine", "Oscilloscope"]
-MACHINE_TYPESS = ["3D-Printer", "Circuit Board Creator"]
 MACHINES_LISTED = {
     1: "3D-Printer",
     2: "Circuit Board Creator",
@@ -253,7 +252,22 @@ def admin_dashboard():
     else:
         return redirect(url_for('dashboard'))
 
+@app.route('/get_status')
+def get_status():
+    status = Status.query.first()
+    return {'status': status.active}
 
+@app.route('/toggle_status')
+def toggle_status():
+    if (current_user.role == "Admin"):
+        status = Status.query.first()
+        status.active = not status.active
+        db.session.commit()
+        return {'status': status.active}
+    else:
+        return redirect(url_for('dashboard'))
+
+    
 ##################| USER FUNCTION FOR ADDING RESERVATION |#################
 # The function retrieves the necessary data from the request, checks if   #
 # the selected time slot is already reserved, creates a new reservation   #
@@ -467,29 +481,35 @@ def load_modal():
 # reservations for the machine, it is marked as 'Open'. The status of     #
 # each machine is added to a list status, which is then passed to the     #
 # status.html template along with MACHINE_TYPES. The template then        #
-# displays the status of each machine in a table.                         #
+# displays the status of each machine in a table. It first checks to see  #
+# if the makerspace is even open.                                         #
 ###########################################################################
 @app.route('/status', methods=['GET', 'POST'])
 @login_required
 def status():
+    makerspace_status = Status.query.first().active
     status = []
-    for machine in MACHINE_TYPES:
-        reservations = Reservations.query.filter_by(machineid=machine).all()
-        reservations_list = []
-        if not reservations:
-            print("Open")
-            status.append("Open")
-        for reservation in reservations:
-            current_time = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-            start_time = reservation.selected_date_start
-            end_time = reservation.selected_date_end
-            if start_time <= current_time <= end_time:
-                print(start_time + " " + current_time + " " + end_time)
-                print("Closed")
-                status.append("Closed")
-            else:
+    if makerspace_status == False:
+        for machine in MACHINE_TYPES:
+            status.append("Closed")
+    else:
+        for machine in MACHINE_TYPES:
+            reservations = Reservations.query.filter_by(machineid=machine).all()
+            reservations_list = []
+            if not reservations:
                 print("Open")
                 status.append("Open")
+            for reservation in reservations:
+                current_time = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+                start_time = reservation.selected_date_start
+                end_time = reservation.selected_date_end
+                if start_time <= current_time <= end_time:
+                    print(start_time + " " + current_time + " " + end_time)
+                    print("Closed")
+                    status.append("Closed")
+                else:
+                    print("Open")
+                    status.append("Open")
 
     return render_template("simple-sidebar/dist/status.html", status = status, machine_types = MACHINE_TYPES)
 
@@ -796,9 +816,9 @@ def add_post():
 @app.route("/contact", methods = ['GET', 'POST'])
 def contact():
     # Your Account SID from twilio.com/console
-    account_sid = ""
+    account_sid = "ACbc855018324a2b88daa90916999cef56"
     # Your Auth Token from twilio.com/console
-    auth_token  = ""
+    auth_token  = "41e5f0936cd4f1a1edf7ba71ae2437e1"
     client = Client(account_sid, auth_token)
     message = client.messages.create(
     #12032400741 Dr.Lori Number
@@ -847,13 +867,28 @@ class Reservations(db.Model):
     eventid = db.Column(db.String(255))
 
 ##############################| Blog Post Model|#############################
-class Posts(db.Model ):
+class Posts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255))
     content = db.Column(db.Text)
     date_posted = db.Column(db.DateTime, default=datetime.utcnow)
     location = db.Column(db.String(255))
     post_userid = db.Column(db.Integer)
+    
+##############################| Blog Post Model|#############################
+class Status(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    active = db.Column(db.Boolean, default=False)
+
+    _instance = None  # class-level attribute to hold the singleton instance
+
+    @classmethod
+    def get_instance(cls):
+        if not cls._instance:
+            cls._instance = cls.query.first() or cls()
+            db.session.add(cls._instance)
+            db.session.commit()
+        return cls._instance
 
 ########################################################################    
 ################################| RUN |#################################

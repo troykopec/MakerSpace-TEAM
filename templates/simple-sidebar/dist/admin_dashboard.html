@@ -202,7 +202,13 @@
 
         <!-- Category 3 -->
         <div class="col-md-4">
-
+          <div class="card w-100">
+            <div class="card-body">
+              <h5 class="card-title">Makerspace Status</h5>
+              <p class="card-text">The makerspace is currently <span id="status"></span>.</p>
+              <button id="toggle-button" class="btn btn-success">Open Makerspace</button>
+            </div>
+          </div>
 
         </br>
         </div>
@@ -251,16 +257,61 @@
     </div>
   </div>
   <br/>
-
+  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x"></script>
 
 <script>
+
+
+$(document).ready(function() {
+  // get initial status and display it in the HTML
+  $.get('/get_status', function(data) {
+    // update status in HTML
+    $('#status').text(data.status ? 'open' : 'closed');
+    
+    // update toggle button text and color based on status
+    if (data.status) {
+      $('#toggle-button').text('Close Makerspace');
+      $('#toggle-button').removeClass('btn-success');
+      $('#toggle-button').addClass('btn-danger');
+    } else {
+      $('#toggle-button').text('Open Makerspace');
+      $('#toggle-button').removeClass('btn-danger');
+      $('#toggle-button').addClass('btn-success');
+    }
+  });
+
+  // handle click event on toggle button
+  $('#toggle-button').click(function() {
+    // send AJAX request to toggle status and get updated status
+    $.get('/toggle_status', function(data) {
+      // update status in HTML
+      $('#status').text(data.status ? 'open' : 'closed');
+      
+      // update toggle button text and color based on status
+      if (data.status) {
+        $('#toggle-button').text('Close Makerspace');
+        $('#toggle-button').removeClass('btn-success');
+        $('#toggle-button').addClass('btn-danger');
+      } else {
+        $('#toggle-button').text('Open Makerspace');
+        $('#toggle-button').removeClass('btn-danger');
+        $('#toggle-button').addClass('btn-success');
+      }
+    });
+  });
+});
 const dropzone = document.getElementById('dropzone');
 const form = document.getElementById('uploadForm');
 const fileInput = document.getElementById('file-upload');
 const fileNameText = dropzone.querySelector('p');
 const formData = new FormData();
+
+
+
+
 
 dropzone.addEventListener('dragover', (e) => {
   e.preventDefault();
