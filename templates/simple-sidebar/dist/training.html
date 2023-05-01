@@ -1,4 +1,5 @@
 {% extends 'simple-sidebar/dist/base.html' %}
+
 {% block content %}
 
 
@@ -36,9 +37,9 @@
                 <p><strong>Training Schedule:</strong></p>
                 <p><strong>3D Printer:</strong> 4/20 3:00</p>
                 <p><strong>CNC Milling:</strong> 4/21 1:00</p>
-                <p><strong>3D Printer:</strong> 4/23 10:00</p>
-                <p><strong>3D Printer:</strong> 4/25 5:00</p>
-                <p><strong>3D Printer:</strong> 4/29 3:00</p>
+                <p><strong>Injection Mold:</strong> 4/23 10:00</p>
+                <p><strong>Vinyl Cutter:</strong> 4/25 5:00</p>
+                <p><strong>Laser:</strong> 4/29 3:00</p>
               </div>
             </div>
           </div>         
@@ -50,51 +51,23 @@
         
 
 <!-- Main Text -->
-<h3 class="mt-4" style="font-size: 24px; font-weight: bold; margin-top: -40px;">Want to make something like this? Attend a live training session!</h3>
+<h3 class="mt-4" style="font-size: 24px; font-weight: bold; margin-top: -20px;">Not sure how to use a certain feature of the site? Read below!</h3>
+<br/>
 
-<div class="card mt-2"></div>
-    <div class="card-body p-0">
-        
-        <style>
-            #carouselExampleIndicators .carousel-item {
-              width: 100%;
-              margin-right: 20px;
-            }
-            #carouselExampleIndicators .carousel-item .multiple-items img {
-              width: 30%;
-              height: 100%;
-              object-fit: cover;
-              margin-right: 5px;
-            }
-            #carouselExampleIndicators .carousel-inner {
-              height: 175px; /* set a fixed height for the carousel */
-            }
-            .multiple-items {
-              display: flex;
-              justify-content: space-between;
-            }
-        </style>
-        
-        <div id="carouselExampleIndicators" class="carousel slide mt-3" data-bs-ride="carousel" data-bs-interval="4000" data-bs-pause="false">
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <div class="multiple-items">
-                        <img src="{{ url_for('static',filename='assets/Multi.jpg') }}" alt="...">
-                        <img src="{{ url_for('static',filename='assets/Disc.jpg') }}" alt="...">
-                        <img src="{{ url_for('static',filename='assets/boat.jpg') }}" alt="...">
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <div class="multiple-items">
-                        <img src="{{ url_for('static',filename='assets/Circuit.jpg') }}" alt="...">
-                        <img src="{{ url_for('static',filename='assets/Injection.jpg') }}" alt="...">
-                        <img src="{{ url_for('static',filename='assets/Shirt.jpg') }}" alt="...">
-                    </div>
-                </div>
-            </div>
-        </div>
-<br/>
-<br/>
+<div class="box-container">
+  <div class="box">
+    <h4>Scheduling Information</h4> 
+    <p>If you want to schedule a machine in the MakerSpace, head over to "Reserve a Machine" and choose the desired machine and time. You will then be able to see your confirmed reservation in the "Scheduled Reservations" tab. If plans change, feel free to cancel your reservation. Make sure to attend training though prior to reserving a machine! This can be done in person and times are listed just above!</p>
+  </div>
+  <div class="box">
+    <h4>Job Request</h4> 
+    <p>If you have a project in mind but aren't quite sure or skilled enough to make it, head over to the "Create Job Request" page and post your project! Be sure to follow the respected format of your name followed by the machine required. Example: "John Snow - 3D Printer" Be sure to include in the description exactly what you want to create and your expected time to e completed. After that, just wait for a student to claim your project and begin working together.</p>
+  </div>
+  <div class="box">
+    <h4>Emergency</h4>
+    <p>In the rare event of an emergency where a machine goes down, someone gets injured, or worse, be sure to use the "EMERGENCY" button at the top. This will send an automated notification to all Admins and Staff. Do not panic! We understand that accidents happen and safety is our number 1 priority!</p>
+  </div>
+</div>
 
 <script>
 // Get the width of the window
@@ -124,6 +97,25 @@ window.addEventListener("load", function() {
 </script>
 
 <style>
+  .box-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.box {
+  flex-basis: calc(33.333% - 20px); /* Subtract 20px for margins */
+  background-color: #f8f9fa;
+  padding: 15px;
+  margin: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.box h4 {
+  margin-top: 0;
+}
+</style>
+
+<style>
   @keyframes pulse {
     0% {
       transform: scale(1);
@@ -138,20 +130,10 @@ window.addEventListener("load", function() {
 </style>
 
 <style>
-.carousel-item-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 1rem;
-}
-</style>
-
-<style>
     @keyframes sway {
         0% { transform: rotateZ(0deg); }
         50% { transform: rotateZ(10deg); }
         100% { transform: rotateZ(0deg); }
     }
 </style>
-
-
 {% endblock %}

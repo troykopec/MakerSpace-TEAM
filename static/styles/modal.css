@@ -1,0 +1,156 @@
+
+      @font-face {
+        font-family: 'MyFont';
+        src: url('/static/fonts/Baby Pool Light.ttf') format('truetype');
+      }
+
+      div.scrollmenu {
+        background-color: white;
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      ::-webkit-scrollbar {
+        display: none;
+      }
+
+      div.scrollmenu a {
+        display: inline-flex; /* Use flexbox layout */
+        flex-direction: column; /* Set flex-direction to column */
+        justify-content: center; /* Center vertically */
+        align-items: center; /* Center horizontally */
+        background-color: white;
+        color: rgb(80, 80, 80);
+        text-align: center;
+        height: 100px;
+        width: 100px;
+        text-decoration: none;
+        margin-right: 10px; /* Add some margin-right */
+        border-radius: 8px; /* add border radius */
+        border: 1px solid #e8e8e8; /* add subtle offwhite border */
+        font-family: 'MyFont', sans-serif;
+        transition: all 0.3s ease; /* add transition effect */
+      }
+
+      div.scrollmenu a.selected {
+        border: 1px solid #00A6AE;
+        box-shadow: 2px 2px 2px #acebee;
+        color:black;
+        font-size: 14px; /* Decrease font size for weekday name */
+        font-weight: 600; /* Make weekday name bold */
+      }
+
+      div.scrollmenu a h3 {
+        font-size: 16px; /* Decrease weekday name font size */
+        margin-bottom: 5px; /* Add some margin below weekday name */
+        font-family: 'MyFont', sans-serif; /* add font family */
+      }
+
+      div.scrollmenu a h2 {
+        font-size: 36px; /* Increase day number font size */
+        font-family: 'MyFont', sans-serif; /* add font family */
+      }
+
+      div.scrollmenu a:hover,
+      div.scrollmenu a:focus {
+          background-color: #F5F5F5;
+          outline: none; /* Remove default focus outline */
+      }
+
+      div.scrollmenu a:hover:not(.selected) {
+          border-color: #D8D8D8; /* Change border color on hover */
+      }
+
+      .contain {
+        height: 75px;
+        width: auto;
+        padding-bottom: 100px;
+        padding-right: 5px;
+        padding-left: 5px;
+      }
+      
+      /* Add left and right arrows to the scroll menu */
+      div.scrollmenu__arrow {
+        position: absolute;
+        top: 68px;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.4)); /* Add shadow effect */
+      }
+
+      /* Position the left arrow on the left side of the scroll menu */
+      div.scrollmenu__arrow--left {
+        background: url('/static/assets/arrowleft.png')  no-repeat center;
+        background-size: contain; /* Set the size of the arrow image */
+        left: 0;
+      }
+
+      /* Position the right arrow on the right side of the scroll menu */
+      div.scrollmenu__arrow--right {
+        background: url('/static/assets/arrowright.png')  no-repeat center; 
+        background-size: contain; /* Set the size of the arrow image */
+        right: 0;
+      }
+
+      /* Hide the arrows by default */
+      div.scrollmenu__arrow {
+        opacity: 0.5;
+        transition: opacity 0.3s ease;
+      }
+
+      /* Show the arrows on hover */
+      div.scrollmenu:hover div.scrollmenu__arrow {
+        opacity: 1;
+      }
+
+      button.time_select {
+        padding-top: 10px;
+        padding-left: 5px;
+        padding-right: 5px;
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: white;
+        border: 1px solid #00A6AE;
+        text-align: center;
+        text-decoration: none;
+        margin-right: 10px;
+        border-radius: 8px;
+        border: 1px solid #e8e8e8;
+        font-family: 'MyFont', sans-serif;
+        font-size: 26px;
+        transition: all 0.3s ease;
+        line-height: 1;
+      }
+
+      button.time_select.selected {
+        border: 1px solid #00A6AE;
+        box-shadow: 2px 2px 2px #acebee;
+        color:black;
+      }
+
+      button.time_select.reserved:hover,
+      button.time_select.reserved:focus {
+        background-color: white;
+        cursor: default;
+      }
+
+      button.time_select.reserved {
+        opacity: 0.6;
+      }
+
+      button.time_select:hover,
+      button.time_select:focus {
+        background-color: #F5F5F5;
+        outline: none;
+      }
+
+      button.time_select:hover:not(.selected) {
+        border-color: #D8D8D8;
+      }

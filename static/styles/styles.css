@@ -76,8 +76,27 @@
   }
 }
 
+
+
 .navbar-nav{
   text-align: right;
+}
+
+.nav-button {
+  display: inline-block;
+  background-color: hsl(0, 0%, 71%);
+  color: white;
+  text-align: center;
+  padding: 8px 16px;
+  margin: 0 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.nav-button:hover {
+  background-color: hsl(0, 0%, 71%);
+  color: white;
+  text-decoration: none;
 }
 
 
@@ -360,6 +379,17 @@ textarea {
 button,
 select {
   text-transform: none;
+}
+
+.scrollmenu {
+  overflow: hidden; /* Hide the scrollbar */
+}
+
+.scrollmenu::-webkit-scrollbar {
+  /* Optional: customize scrollbar appearance */
+  width: 0.5em;
+  height: 0.5em;
+  background-color: #f5f5f5;
 }
 
 [role=button] {
@@ -2501,7 +2531,7 @@ textarea.form-control-lg {
      -moz-appearance: none;
           appearance: none;
   -webkit-print-color-adjust: exact;
-          color-adjust: exact;
+  color-adjust: exact;
 }
 .form-check-input[type=checkbox] {
   border-radius: 0.25em;
@@ -11314,6 +11344,9 @@ textarea.form-control-lg {
   transition: margin 0.25s ease-out;
 }
 
+  .pgcontentrap {
+
+  }
 #sidebar-wrapper {
   font-size: 1.2rem;
   height: 79px;
@@ -11331,6 +11364,8 @@ textarea.form-control-lg {
 
 #page-content-wrapper {
   min-width: 100vw;
+  margin-left: -1px;
+  border-left: 1px solid #dee2e6;
 }
 
 body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
@@ -11350,4 +11385,5 @@ body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
   body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
     margin-left: -221px;
   }
+  
 }

@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError, SelectField
 from wtforms.validators import DataRequired, EqualTo, Length
+from flask_ckeditor import CKEditorField
 
 
 # Create Signup Form
@@ -8,7 +9,7 @@ class UserForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     username = StringField("Username", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
-    favorite_color = StringField("Favorite Color")
+    role = StringField("Role")
     password_hash = PasswordField("Password", validators=[DataRequired(),
         EqualTo('password_hash2', message='Passwords Must Match!')])
     password_hash2 = PasswordField("Confirm Password", validators=[DataRequired()])
@@ -25,3 +26,18 @@ class PasswordForm(FlaskForm):
     email = StringField("Whats Your Email?", validators=[DataRequired()])
     password_hash = PasswordField("Whats Your Password?", validators=[DataRequired()])
     submit = SubmitField("Submit")
+    
+# Create a Posts Form
+class PostForm(FlaskForm):
+        title = StringField("Title", validators=[DataRequired()])
+        #content = StringField("Content", validators=[DataRequired()], widget=TextArea())
+        content = CKEditorField('Content', validators=[DataRequired()])
+        machine_choices = [
+            ("1", "Machine 1"),
+            ("2", "Machine 2"),
+            ("3", "Machine 3"),
+            ("4", "Machine 4"),
+        ]
+        machine = SelectField("Machine", choices=machine_choices, validators=[DataRequired()])
+        submit = SubmitField("Submit")
+        location = StringField("Location", validators=[DataRequired()], default="blog")
