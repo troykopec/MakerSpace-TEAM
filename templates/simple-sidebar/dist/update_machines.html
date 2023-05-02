@@ -1,0 +1,41 @@
+{% extends 'simple-sidebar/dist/base.html' %}
+{% block content %}
+<br/>
+{% for message in get_flashed_messages() %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    
+{% endfor %}
+
+
+{% if current_user.role == "Admin" %}
+        <h1>Update User...</h1>
+        <br/>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control", value = machine_to_update.machine_name) }}
+            <br/>
+
+            {{ form.amount_of_machines.label(class="form-label") }}
+            {{ form.amount_of_machines(class="form-control", value = machine_to_update.amount_of_machines) }}
+            <br/>
+
+            {{ form.machine_id.label(class="visually-hidden") }}
+            {{ form.machine_id(class="visually-hidden", value = machine_to_update.id) }}
+
+            {{ form.submit(class="btn btn-secondary") }}
+        </form>
+        <br/><br/><br/>
+{% else %}
+    <br/>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            Sorry! You cant edit this user.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <center><h2>Access Denied</h2></center>
+{% endif %}
+
+{% endblock %}

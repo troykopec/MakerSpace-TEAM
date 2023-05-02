@@ -1,0 +1,55 @@
+{% extends 'simple-sidebar/dist/base.html' %}
+{% block content %}
+<br/>
+{% for message in get_flashed_messages() %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    
+{% endfor %}
+
+{% for error in form.password_hash.errors %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{ error }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+
+{% if current_user.role == "Admin" %}
+        <h1>Update User...</h1>
+        <br/>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            {{ form.username.label(class="form-label") }}
+            {{ form.username(class="form-control", value = name_to_update.username) }}
+            <br/>
+            
+            {{ form.email.label(class="visually-hidden") }}
+            {{ form.email(class="visually-hidden", value = name_to_update.role) }}
+            
+            {{ form.role.label(class="form-label") }}
+            {{ form.role(class="form-control", value = name_to_update.role) }}
+            <br/>
+            
+            {{ form.password_hash.label(class="form-label") }}
+            {{ form.password_hash(class="form-control", placeholder='Type "None" if you are not changing password.') }}
+            <br/>
+
+            {{ form.password_hash2.label(class="form-label") }}
+            {{ form.password_hash2(class="form-control", placeholder='Type "None" if you are not changing password.') }}
+            <br/>
+
+            {{ form.submit(class="btn btn-secondary") }}
+        </form>
+        <br/><br/><br/>
+{% else %}
+    <br/>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            Sorry! You cant edit this user.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <center><h2>Access Denied</h2></center>
+{% endif %}
+
+{% endblock %}
