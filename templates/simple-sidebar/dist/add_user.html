@@ -1,36 +1,35 @@
 {% extends 'simple-sidebar/dist/base.html' %}
 {% block content %}
-
+<br/>
 {% for message in get_flashed_messages() %}
-    <br/>
+    
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
         {{ message }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     
 {% endfor %}
+
+{% for error in form.password_hash.errors %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{ error }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+
     {% if name %}
 
     {% else %}
-    <br/>
         <h1>Signup:</h1>
         <br/>
         <form method="POST">
             {{ form.hidden_tag() }}
-            {{ form.name.label(class="form-label") }}
-            {{ form.name(class="form-control") }}
-            <br/>
-
             {{ form.username.label(class="form-label") }}
             {{ form.username(class="form-control") }}
             <br/>
 
             {{ form.email.label(class="form-label") }}
             {{ form.email(class="form-control") }}
-            <br/>
-
-            {{ form.role.label(class="form-label") }}
-            {{ form.role(class="form-control") }}
             <br/>
             
             {{ form.password_hash.label(class="form-label") }}

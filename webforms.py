@@ -1,12 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError
+from wtforms import StringField, IntegerField, SubmitField, PasswordField, BooleanField, ValidationError
 from wtforms.validators import DataRequired, EqualTo, Length
 from flask_ckeditor import CKEditorField
 
 
 # Create Signup Form
 class UserForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired()])
     username = StringField("Username", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
     role = StringField("Role")
@@ -34,3 +33,15 @@ class PostForm(FlaskForm):
         content = CKEditorField('Content', validators=[DataRequired()])
         submit = SubmitField("Submit")
         location = StringField("Location", validators=[DataRequired()], default="blog")
+
+class addMachineForm(FlaskForm):
+    name = StringField("Name of Machine", validators=[DataRequired()])
+    amount_of_machines = IntegerField("# of Machines", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+    
+class editMachineForm(FlaskForm):
+    name = StringField("Name of Machine", validators=[DataRequired()])
+    amount_of_machines = IntegerField("# of Machines", validators=[DataRequired()])
+    machine_id = IntegerField("Machine ID", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+    

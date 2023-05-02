@@ -16,6 +16,7 @@
               .then(response => response.json())
               .then(data => {
                 reservations = data;
+                console.log(reservations)
               })
               .catch(error => {
                 console.error('Error:', error);
@@ -23,59 +24,59 @@
           
 
 
-          eventButtons.forEach(button => {
-            button.addEventListener('click', () => {
-              // remove previously created buttons (if any)
-              buttonContainer.innerHTML = '';
-          
-              const eventData = JSON.parse(button.dataset.event);
-              eventData.starts.forEach((start, i) => {
-                
-                const event_date_start = new Date(start.replace(/-/g, '/'));
-                const event_date_end = new Date(eventData['ends'][i].replace(/-/g, '/'));
-                const machine_id = eventData['machine-id'];
-                const event_id = eventData['event-id'];
-                const current_user = eventData['current-user'];
-                const is_admin = eventData['is-admin'];
-                const event_hour_start = event_date_start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                const event_hour_end = event_date_end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                const event_hour = (event_hour_start.replace(" AM", "").replace(" PM", "")) + " - " + event_hour_end;
-                let reservationFound = false;
-                for (let i = 0; i < reservations.length; i++) {
-                  const reservation = reservations[i];
-                  if (reservation.machineid === machine_id && reservation.selected_date === start && reservation.eventid === event_id) {
-                    reservationFound = true;
-                    break;
-                  }
-                }
-                if (reservationFound && is_admin !== "Admin") {
-                  const button = document.createElement('button');
-                  button.textContent = event_hour;
-                  button.classList.add('time_select', 'reserved');
-                  button.disabled = true;
-                  buttonContainer.appendChild(button);
-                } else {
-                  const button = document.createElement('button');
-                  button.textContent = event_hour;
-                  button.classList.add('time_select');
-                  button.dataset.eventDate_start = event_date_start; // set the event date as a data attribute on the button
-                  button.dataset.machineId = machine_id; // set the machine ID as a data attribute on the button
-                  button.dataset.eventId = event_id;
-                  button.dataset.currentUser = current_user;
-                  button.dataset.eventDate_end = event_date_end;
-                  button.addEventListener('click', () => {
-                    // remove the 'select' class from all buttons
-                    buttonContainer.querySelectorAll('.time_select').forEach(btn => {
-                      btn.classList.remove('selected');
-                    });
-                    // add the 'select' class to the clicked button
-                    button.classList.add('selected');
+              eventButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                  // remove previously created buttons (if any)
+                  buttonContainer.innerHTML = '';
+              
+                  const eventData = JSON.parse(button.dataset.event);
+                  eventData.starts.forEach((start, i) => {
+                  
+                    const event_date_start = new Date(start.replace(/-/g, '/'));
+                    const event_date_end = new Date(eventData['ends'][i].replace(/-/g, '/'));
+                    const machine_id = eventData['machine-id'];
+                    const event_id = eventData['event-id'][i].event_id;
+                    const current_user = eventData['current-user'];
+                    const is_admin = eventData['is-admin'];
+                    const event_hour_start = event_date_start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    const event_hour_end = event_date_end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    const event_hour = (event_hour_start.replace(" AM", "").replace(" PM", "")) + " - " + event_hour_end;
+                    let reservationFound = false;
+                    for (let i = 0; i < reservations.length; i++) {
+                      const reservation = reservations[i];
+                      if (reservation.machineid === machine_id && reservation.selected_date === start && reservation.eventid === event_id) {
+                        reservationFound = true;
+                        break;
+                      }
+                    }
+                    if (reservationFound && is_admin !== "Admin") {
+                      const button = document.createElement('button');
+                      button.textContent = event_hour;
+                      button.classList.add('time_select', 'reserved');
+                      button.disabled = true;
+                      buttonContainer.appendChild(button);
+                    } else {
+                      const button = document.createElement('button');
+                      button.textContent = event_hour;
+                      button.classList.add('time_select');
+                      button.dataset.eventDate_start = event_date_start; // set the event date as a data attribute on the button
+                      button.dataset.machineId = machine_id; // set the machine ID as a data attribute on the button
+                      button.dataset.eventId = event_id;
+                      button.dataset.currentUser = current_user;
+                      button.dataset.eventDate_end = event_date_end;
+                      button.addEventListener('click', () => {
+                        // remove the 'select' class from all buttons
+                        buttonContainer.querySelectorAll('.time_select').forEach(btn => {
+                          btn.classList.remove('selected');
+                        });
+                        // add the 'select' class to the clicked button
+                        button.classList.add('selected');
+                      });
+                      buttonContainer.appendChild(button);
+                    }
                   });
-                  buttonContainer.appendChild(button);
-                }
+                });
               });
-            });
-          });
 
           document.getElementById('book-reservation').addEventListener('click', () => {
             const selectedButton = document.querySelector('.time_select.selected');
