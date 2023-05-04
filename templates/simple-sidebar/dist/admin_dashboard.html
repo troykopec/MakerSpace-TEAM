@@ -150,7 +150,7 @@
         <div class="col-md-4" >
             <div class="card w-100">
                 <div class="card-body">
-                <div class="card-title"><h5 class="card-title">Upload Users <i class="fa-solid fa-file-csv" title='CSV Format: [ name, email, password, username, role ]'></i></h5> </div>
+                <div class="card-title"><h5 class="card-title">Upload Users <i class="fa-solid fa-file-csv" title='CSV Format: [ email, role ]'></i></h5> </div>
                   
                   <form method="POST" enctype="multipart/form-data" id="uploadForm">
                     <div class="form-group">
@@ -386,7 +386,7 @@
 {% set machines = get_machines() %}
 <div class="card">
   <div class="card-body">
-  <div class="card-title"><h5 class="card-title">Set Machines <i class="fa-regular fa-calendar-minus"></i><a class="btn btn-primary" href="{{ url_for('add_machine') }}">Add</a> </h5></div>
+  <div class="card-title"><h5 class="card-title">Set Machines <i class="fa-sharp fa-solid fa-plus"></i> <a class="btn btn-primary" href="{{ url_for('add_machine') }}">Add</a> </h5></div>
 
     <div class="table-container">
       <table class="table table-striped table-hover">

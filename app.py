@@ -116,13 +116,12 @@ def upload_users():
 ###########################################################################
 def csv_to_db(filePath):
       # CVS Column Names
-      col_names = ['name','email', 'password_hash' , 'username', 'role']
+      col_names = ['email', 'role']
       # Use Pandas to parse the CSV file
       csvData = pd.read_csv(filePath,names=col_names, header=None, dtype=str)
       # Loop through the Rows
       for i,row in csvData.iterrows():
           print(str(row['email']) + "<-----------------------------------")
-          hashed_pw = generate_password_hash(row['password_hash'], "sha256")
           hashed_email = generate_password_hash(row['email'], "sha256")
           user = Users(email_hash=hashed_email, role=row['role'])
           db.session.add(user)
